@@ -1,0 +1,4 @@
+candidate_id,prompt,image_path,reference_image,task_type,expected_text
+smoke_001,a friendly taxi driver mascot,outputs/candidates/smoke_001.png,data/references/ref_driver.png,subject,
+smoke_002,a red cube to the left of a blue sphere,outputs/candidates/smoke_002.png,,spatial,
+smoke_003,a sign that says LOCAL,outputs/candidates/smoke_003.png,,text,LOCAL

@@ -1,0 +1,33 @@
+Task mode: create
+Primary deck-profile: engineering-platform
+Secondary gates: research briefing, visual comparison
+
+Required proof objects:
+- Slide 1: technical route map from 2D spatial tokens to 1D semantic tokens, binary tokens, and refinement.
+- Slide 2: EOSTok paper summary with problem, method, result, and subject-consistency relevance.
+- Slide 3: EOSTok mechanism infographic.
+- Slide 4: BitDance baseline paper summary with problem, method, result, and why it is a useful baseline.
+- Slide 5: BitDance mechanism infographic and contrast with EOSTok.
+
+Source requirements:
+- EOSTok: arXiv:2605.00503, End-to-End Autoregressive Image Generation with 1D Semantic Tokenizer.
+- BitDance: arXiv:2602.14041, BitDance: Scaling Autoregressive Generative Models with Binary Tokens.
+- Supporting context from prior notes: VAR, SemTok, GRN, Infinity, OmniGen2, SDeC.
+
+Design constraints:
+- Editable PowerPoint.
+- First slide must read as a one-page technical roadmap.
+- Slides 2 and 4 should be abstract-style paper cards.
+- Slides 3 and 5 should be information graphics, not text dumps.
+- Use Chinese slide copy for the user's report.
+- Keep all sources in compact footers.
+
+QA gates:
+- Render all slides as PNG previews.
+- Verify that text does not overflow major boxes.
+- Verify diagram arrows are visually attached and directions are correct.
+- Export final PPTX only after preview render succeeds.
+
+Known missing inputs:
+- No institution template supplied; use a custom technical visual system.
+- Baseline model not specified by user; choose BitDance because it is a recent token-innovation AR model and contrasts cleanly with EOSTok.

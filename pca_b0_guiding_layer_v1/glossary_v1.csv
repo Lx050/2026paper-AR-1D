@@ -1,0 +1,7 @@
+Term,Definition,Experimental Proxy
+Core Consistency Gate,Minimum preservation of user-valued invariants,"subject_score, structure_score, forbidden_loss_flag"
+Perceptual Activation,User mental/emotional/memory activation caused by output,"emotion_score, memory_score, activation_words, human choice"
+Value Anchor,Reference content the user already considers good,"core_value_tags, user_preference_statement"
+Acceptable Deviation,Change that improves output without losing core value,human acceptable_deviation label
+Core Loss,Loss of user-forbidden or user-valued invariant,"forbidden_loss_flag, human core-loss judgment"
+Absorbability,Whether failure can be fixed by allowed intervention,"retry_absorbed, prompt_absorbed, matched_aug_absorbed"

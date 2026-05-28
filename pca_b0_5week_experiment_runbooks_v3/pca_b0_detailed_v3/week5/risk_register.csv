@@ -1,0 +1,4 @@
+risk_id,risk,impact,mitigation
+R1,Scorers disagree with human judgment,High,Keep human eval as pilot criterion
+R2,Emotion score dominates ranking,Medium,Run ablation and tune weights
+R3,Subject similarity rewards copying,High,Use acceptable deviation and core value retention

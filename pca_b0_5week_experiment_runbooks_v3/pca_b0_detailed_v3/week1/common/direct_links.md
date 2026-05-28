@@ -1,0 +1,34 @@
+# Direct links
+
+- SDXL Base 1.0: https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0
+- Diffusers SDXL docs: https://huggingface.co/docs/diffusers/en/using-diffusers/sdxl
+- PartiPrompts: https://huggingface.co/datasets/nateraw/parti-prompts
+- DiffusionDB: https://huggingface.co/datasets/poloclub/diffusiondb
+- EmoSet GitHub: https://github.com/JingyuanYY/EmoSet
+- EmoSet project: https://vcc.tech/EmoSet
+- ArtEmis GitHub: https://github.com/optas/artemis
+- ArtEmis paper: https://openaccess.thecvf.com/content/CVPR2021/html/Achlioptas_ArtEmis_Affective_Language_for_Visual_Art_CVPR_2021_paper.html
+- EmotionCLIP GitHub: https://github.com/Xeaver/EmotionCLIP
+- EmotionCLIP HF: https://huggingface.co/jiangchengchengNLP/EmotionCLIP
+- LaMem/MemNet: https://memorability.csail.mit.edu/download.html
+- PickScore GitHub: https://github.com/yuvalkirstain/pickscore
+- PickScore HF: https://huggingface.co/yuvalkirstain/PickScore_v1
+- ImageReward GitHub: https://github.com/zai-org/ImageReward
+- ImageReward HF: https://huggingface.co/zai-org/ImageReward
+- HPSv2 GitHub: https://github.com/tgxs002/HPSv2
+- DreamBench++ GitHub: https://github.com/yuangpeng/dreambench_plus
+- DreamBench++ project: https://dreambenchplus.github.io/
+- VBench GitHub: https://github.com/Vchitect/VBench
+- VBench project: https://vchitect.github.io/VBench-project/
+- T2I-CompBench GitHub: https://github.com/Karine-Huang/T2I-CompBench
+- T2I-CompBench project: https://karine-h.github.io/T2I-CompBench/
+- GenEval GitHub: https://github.com/djghosh13/geneval
+- RelTR GitHub: https://github.com/yrcong/RelTR
+- GeoDE GitHub: https://github.com/princetonvisualai/geode_dataset
+- GeoDE paper: https://arxiv.org/html/2301.02560v4
+- Dollar Street: https://www.gapminder.org/dollar-street
+- Dollar Street paper: https://openreview.net/forum?id=qnfYsave0U4
+- DIG-In GitHub: https://github.com/facebookresearch/DIG-In
+- DIG-In paper: https://arxiv.org/html/2308.06198v3
+- THINGS: https://things-initiative.org/
+- THINGS paper: https://journals.plos.org/plosone/article?id=10.1371%2Fjournal.pone.0223792

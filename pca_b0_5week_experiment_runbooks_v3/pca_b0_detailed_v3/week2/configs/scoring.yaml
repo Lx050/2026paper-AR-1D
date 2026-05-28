@@ -1,0 +1,9 @@
+device: cuda
+batch_size: 8
+scorers:
+  preference_primary: imagereward
+  preference_secondary: hpsv2_or_pickscore
+  emotion: emotionclip_or_clip_zeroshot
+  subject: clip_similarity
+  structure: geneval_or_manual
+  text: easyocr

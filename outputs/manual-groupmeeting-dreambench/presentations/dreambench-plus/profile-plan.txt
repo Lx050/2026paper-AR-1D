@@ -1,0 +1,8 @@
+task mode: create
+primary deck-profile: engineering-platform
+secondary profile gates: strategy-leadership, appendix-heavy source discipline
+required proof objects: downloaded DreamBench++ PDF, clickable HTML source map, verbatim script, rendered PPTX previews
+source/asset requirements: no unsourced numerical claims; visible URLs on source slide; local PDF path included
+brand authenticity constraints: no invented logos or screenshots; use editable native text/shapes only
+profile-specific QA gates: slide text must be readable at 16:9; every slide must support the spoken script; final slide must include source URLs
+known missing inputs: none; full DreamBench++ PDF downloaded locally

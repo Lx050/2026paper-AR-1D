@@ -1,0 +1,10 @@
+﻿import { Presentation, PresentationFile } from 'file:///C:/Users/lab610/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/@oai/artifact-tool/dist/artifact_tool.mjs';
+const p = Presentation.create();
+const s = p.slides.add();
+s.shapes.add({geometry:'rect', position:{left:0,top:0,width:1280,height:720}, fill:{type:'solid', color:'#FFFFFF'}, line:{fill:{type:'none'}, width:0}});
+const t=s.shapes.add({geometry:'rect', position:{left:100,top:100,width:500,height:80}, fill:{type:'none'}, line:{fill:{type:'none'}, width:0}});
+t.text='测试 EOSTok';
+t.text.fontSize=40; t.text.typeface='Microsoft YaHei'; t.text.color='#111827';
+const blob = await PresentationFile.exportPptx(p); await blob.save('G:/Lbx/paper/2026_5_25/outputs/test-artifact.pptx');
+const png = await p.export({format:'png', scale:1}); await png.save('G:/Lbx/paper/2026_5_25/outputs/test-artifact.png');
+console.log('done');

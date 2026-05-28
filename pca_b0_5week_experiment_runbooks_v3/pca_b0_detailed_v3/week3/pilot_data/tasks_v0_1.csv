@@ -1,0 +1,4 @@
+task_id,prompt,reference_image,user_preference_statement,core_value_tags,forbidden_loss,allowed_deviation,task_type,target_region,expected_text
+T001,"a friendly taxi driver mascot, warm and approachable",data/references/taxi_ref.png,"keep the friendly rounded city-life feeling","friendly;rounded;urban","cold;aggressive;robotic","pose;color;clothing",subject,,
+T002,"a red cube to the left of a blue sphere",,,"red cube;blue sphere;left-of","wrong relation","style;background",spatial,,
+T003,"a sign that says LOCAL",,,"text LOCAL","misspelled text","font;background",text,,LOCAL

@@ -1,0 +1,6 @@
+Doctrine_ID,Guiding Statement,Mapped Experiment Asset,Acceptance Evidence,Weakening Evidence
+D1,Good output = consistency gate + activation ranking,Week3 PCA-B0 pipeline,PCA-B0 reduces core-loss and improves/keeps human win-rate,Preference-only performs equally or better without core-loss increase
+D2,"Reference image is value anchor, not copy template",Week4 human preference statement fields,Users report retained core_value_tags,Users prefer mechanically similar outputs over PCA-B0
+D3,"Metrics are evidence, not judge",Week4 human eval,Metric-human correlation documented,Automatic scorers conflict with human decisions without explanation
+D4,Failure is non-intersection of reachable set and feasible set,Week5 failure taxonomy,Failures labeled by intervention level,Residual-only labels produce inconsistent causes
+D5,Culture is background variable,GeoDE/Dollar Street/DIG-In notes,Culture module explains differences in choices or failures,No signal from culture/context fields

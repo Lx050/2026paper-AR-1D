@@ -1,0 +1,7 @@
+Risk_ID,Risk,Why It Matters,Mitigation
+R1,PCA-B0 becomes a bag of metrics,Loses guiding thesis,Enforce gate-then-rank architecture
+R2,Consistency gate too strict,Kills creative improvements,Ask users about acceptable deviation
+R3,Preference scorer dominates,Reverts to existing baseline,Compare preference-only against PCA-B0
+R4,Culture module too shallow,Culture claim becomes decorative,"Use as exploratory, not conclusive, in v0.1"
+R5,Personal memory unmeasured,Core thesis about activation weakens,Collect Personal Activation MiniSet
+R6,Automatic metrics disagree with humans,Evaluation invalid,"Create evaluator failure set, report honestly"

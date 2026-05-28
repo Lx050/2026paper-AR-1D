@@ -1,0 +1,2 @@
+annotation_item_id,task_id,option_A_path,option_B_path,option_C_path,option_D_path,method_A,method_B,method_C,method_D,display_order_seed
+ANN001,T001,outputs/contact/T001_A.png,outputs/contact/T001_B.png,outputs/contact/T001_C.png,outputs/contact/T001_D.png,pca_b0,raw,preference_only,consistency_only,42

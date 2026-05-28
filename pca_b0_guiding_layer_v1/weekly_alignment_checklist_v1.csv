@@ -1,0 +1,6 @@
+Week,Question to Ask Before Running,Must Not Do,Required Output
+1,Which doctrine layer does each resource support?,Do not download everything blindly,resource_matrix.csv with category/use/risk
+2,Is this scorer a gate or a ranker?,Do not collapse all scores into one total,scorer output CSV with module labels
+3,Does pipeline run gate before rank?,Do not let ImageReward override core-loss,pca_b0_ranked.csv + reject reasons
+4,Do humans agree with the automatic ranking?,Do not treat metrics as final truth,pairwise choices + activation words
+5,Which results weaken the theory?,Do not hide failed cases,pilot report with risk and failure taxonomy

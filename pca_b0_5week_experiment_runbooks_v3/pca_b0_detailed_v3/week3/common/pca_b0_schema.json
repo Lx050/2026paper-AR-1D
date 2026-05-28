@@ -1,0 +1,39 @@
+{
+  "task_id": "T001",
+  "prompt": "text prompt",
+  "reference_image": "path/url optional",
+  "user_preference_statement": "what user values",
+  "core_value_tags": [
+    "friendly",
+    "rounded"
+  ],
+  "forbidden_loss": [
+    "cold",
+    "aggressive"
+  ],
+  "allowed_deviation": [
+    "color",
+    "pose"
+  ],
+  "task_type": "subject|spatial|count|text|culture|emotion",
+  "target_region": "optional",
+  "expected_text": "optional",
+  "candidate_id": "T001_raw_s1000",
+  "image_path": "outputs/candidates/...png",
+  "intervention_level": "raw|retry|rewrite|matched|mismatched|oracle",
+  "seed": 1000,
+  "model_id": "stabilityai/stable-diffusion-xl-base-1.0",
+  "subject_gate_score": null,
+  "structure_gate_score": null,
+  "accepted_by_gate": null,
+  "imagereward": null,
+  "hpsv2": null,
+  "emotion_top1": null,
+  "emotion_conf": null,
+  "memorability_score": null,
+  "culture_score": null,
+  "activation_rank_score": null,
+  "rank_in_task": null,
+  "human_choice": null,
+  "human_reason": "optional"
+}

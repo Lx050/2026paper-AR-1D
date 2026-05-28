@@ -1,0 +1,351 @@
+﻿<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PCA-B0 Impressionist File Gallery</title>
+  <style>
+    :root {
+      --ink: #243042;
+      --muted: #64748b;
+      --paper: rgba(255, 253, 244, 0.78);
+      --paper-strong: rgba(255, 252, 235, 0.93);
+      --blue: #86b9c8;
+      --green: #9dbb8f;
+      --rose: #e9a9a4;
+      --gold: #f1c36d;
+      --violet: #aaa1d6;
+      --shadow: rgba(50, 56, 66, 0.18);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      font-family: "Iowan Old Style", "Microsoft YaHei", "PingFang SC", "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at 12% 10%, rgba(255, 216, 125, .62), transparent 28%),
+        radial-gradient(circle at 85% 8%, rgba(123, 184, 201, .55), transparent 30%),
+        radial-gradient(circle at 18% 86%, rgba(231, 154, 151, .50), transparent 34%),
+        radial-gradient(circle at 88% 78%, rgba(147, 181, 133, .55), transparent 35%),
+        linear-gradient(135deg, #fff2cc 0%, #eaf5f2 36%, #f9dad5 70%, #f7efd8 100%);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: .38;
+      background-image:
+        repeating-linear-gradient(112deg, rgba(255,255,255,.28) 0 2px, transparent 2px 8px),
+        repeating-linear-gradient(24deg, rgba(65,79,98,.055) 0 1px, transparent 1px 9px);
+      mix-blend-mode: soft-light;
+    }
+    .shell { width: min(1440px, calc(100vw - 36px)); margin: 0 auto; padding: 36px 0 72px; }
+    .hero {
+      position: relative;
+      padding: 44px;
+      border: 1px solid rgba(255,255,255,.58);
+      border-radius: 34px;
+      background: linear-gradient(145deg, rgba(255,252,237,.82), rgba(234,247,244,.66));
+      box-shadow: 0 24px 70px var(--shadow);
+      overflow: hidden;
+      backdrop-filter: blur(18px);
+    }
+    .hero::after {
+      content: "";
+      position: absolute;
+      right: -80px;
+      top: -70px;
+      width: 360px;
+      height: 360px;
+      border-radius: 44% 56% 52% 48%;
+      background:
+        radial-gradient(circle at 40% 35%, rgba(241,195,109,.86), transparent 38%),
+        radial-gradient(circle at 66% 65%, rgba(134,185,200,.74), transparent 45%),
+        radial-gradient(circle at 25% 72%, rgba(233,169,164,.63), transparent 42%);
+      filter: blur(2px);
+      opacity: .72;
+    }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.55);
+      color: #5b6b73;
+      font-size: 13px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    h1 {
+      position: relative;
+      z-index: 1;
+      max-width: 920px;
+      margin: 22px 0 16px;
+      font-family: "LXGW WenKai", "STKaiti", "KaiTi", Georgia, serif;
+      font-size: clamp(36px, 5.8vw, 76px);
+      line-height: .98;
+      font-weight: 700;
+      letter-spacing: -0.04em;
+    }
+    .hero p {
+      position: relative;
+      z-index: 1;
+      max-width: 860px;
+      margin: 0;
+      font-size: 18px;
+      line-height: 1.78;
+      color: #435266;
+    }
+    .meta {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 28px;
+    }
+    .meta-card {
+      padding: 16px;
+      border-radius: 22px;
+      background: rgba(255,255,255,.50);
+      border: 1px solid rgba(255,255,255,.6);
+    }
+    .meta-card strong { display: block; font-size: 28px; }
+    .meta-card span { color: var(--muted); font-size: 13px; }
+    .controls {
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      margin: 24px 0;
+      padding: 16px;
+      border-radius: 26px;
+      background: rgba(255, 250, 232, .76);
+      border: 1px solid rgba(255,255,255,.75);
+      box-shadow: 0 18px 42px rgba(76, 81, 92, .12);
+      backdrop-filter: blur(18px);
+    }
+    .filter-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+    button.filter {
+      border: 0;
+      cursor: pointer;
+      padding: 10px 15px;
+      border-radius: 999px;
+      color: #354256;
+      background: rgba(255,255,255,.58);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.65);
+      transition: transform .2s ease, background .2s ease;
+    }
+    button.filter:hover { transform: translateY(-1px); background: rgba(255,255,255,.84); }
+    button.filter.active { color: #18212f; background: linear-gradient(135deg, rgba(241,195,109,.95), rgba(233,169,164,.83)); }
+    .search {
+      width: min(100%, 520px);
+      margin-left: auto;
+      padding: 12px 16px;
+      border: 0;
+      border-radius: 18px;
+      color: var(--ink);
+      background: rgba(255,255,255,.72);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.85);
+      outline: none;
+    }
+    .status { margin: 12px 4px 0; color: var(--muted); font-size: 14px; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+    }
+    .card {
+      position: relative;
+      min-height: 430px;
+      padding: 22px;
+      border-radius: 30px;
+      background: var(--paper);
+      border: 1px solid rgba(255,255,255,.78);
+      box-shadow: 0 22px 56px rgba(51, 61, 76, .14);
+      overflow: hidden;
+      backdrop-filter: blur(16px);
+      animation: rise .6s ease both;
+    }
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: -40px auto auto -34px;
+      width: 170px;
+      height: 170px;
+      border-radius: 42% 58% 57% 43%;
+      background: var(--wash, rgba(134,185,200,.42));
+      filter: blur(8px);
+      opacity: .72;
+    }
+    .card > * { position: relative; z-index: 1; }
+    .badge-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+    .badge {
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.58);
+      color: #52606f;
+      font-size: 12px;
+      border: 1px solid rgba(255,255,255,.62);
+    }
+    .card h2 {
+      margin: 0 0 8px;
+      font-family: "LXGW WenKai", "STKaiti", "KaiTi", Georgia, serif;
+      font-size: 23px;
+      line-height: 1.15;
+      letter-spacing: -.02em;
+      word-break: break-word;
+    }
+    .path {
+      display: block;
+      margin-bottom: 14px;
+      color: #657385;
+      font-size: 12px;
+      line-height: 1.45;
+      word-break: break-all;
+      text-decoration: none;
+    }
+    .summary { margin: 0 0 16px; color: #314157; font-size: 15px; line-height: 1.7; }
+    .section-title {
+      margin: 15px 0 7px;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .13em;
+      color: #7a6a53;
+      font-weight: 700;
+    }
+    ul { margin: 0; padding-left: 18px; }
+    li { margin: 5px 0; line-height: 1.52; color: #425269; }
+    .note {
+      margin-top: 13px;
+      padding: 12px;
+      border-radius: 18px;
+      background: rgba(255,255,255,.43);
+      color: #4f5d70;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+    .next { border-left: 4px solid rgba(241,195,109,.9); }
+    .caveat { border-left: 4px solid rgba(134,185,200,.9); }
+    .card:nth-child(5n+1) { --wash: rgba(134,185,200,.44); }
+    .card:nth-child(5n+2) { --wash: rgba(241,195,109,.42); }
+    .card:nth-child(5n+3) { --wash: rgba(233,169,164,.38); }
+    .card:nth-child(5n+4) { --wash: rgba(157,187,143,.42); }
+    .card:nth-child(5n+5) { --wash: rgba(170,161,214,.35); }
+    .footer {
+      margin-top: 28px;
+      color: #52606f;
+      text-align: center;
+      font-size: 14px;
+    }
+    @keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+    @media (max-width: 1100px) { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .meta { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    @media (max-width: 720px) {
+      .shell { width: min(100vw - 22px, 640px); padding-top: 16px; }
+      .hero { padding: 26px; border-radius: 26px; }
+      .grid { grid-template-columns: 1fr; }
+      .controls { position: relative; }
+      .search { margin-left: 0; width: 100%; }
+      .meta { grid-template-columns: 1fr; }
+    }
+    @media print {
+      body { background: white; }
+      body::before, .controls { display: none; }
+      .shell { width: 100%; }
+      .card { break-inside: avoid; box-shadow: none; border: 1px solid #ddd; }
+      .grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <section class="hero">
+      <div class="eyebrow">PCA-B0 · Impressionist File Gallery</div>
+      <h1>一座研究资料的印象派画廊</h1>
+      <p>覆盖当前目录下 72 个可读资料文件。每个文件被整理成一张卡片：它是什么、为什么存在、关键内容、风险提醒和下一步。柔和一点，但不糊弄；像一张能工作的油画索引。</p>
+      <div class="meta">
+        <div class="meta-card"><strong>72</strong><span>可读文件</span></div>
+        <div class="meta-card"><strong>7</strong><span>资料层级</span></div>
+        <div class="meta-card"><strong>9</strong><span>文件类型</span></div>
+        <div class="meta-card"><strong>2026-05-26 19:39</strong><span>生成时间</span></div>
+      </div>
+    </section>
+    <section class="controls" aria-label="筛选和搜索">
+      <div class="filter-row">
+        <button class="filter active" data-filter="全部">全部</button>
+        <button class="filter" data-filter="研究总览">研究总览</button>
+        <button class="filter" data-filter="SOTA/厚书层">SOTA/厚书层</button>
+        <button class="filter" data-filter="数据矩阵">数据矩阵</button>
+        <button class="filter" data-filter="guiding layer">guiding layer</button>
+        <button class="filter" data-filter="weekly runbooks">weekly runbooks</button>
+        <button class="filter" data-filter="脚本配置">脚本配置</button>
+        <button class="filter" data-filter="PDF">PDF</button>
+        <input id="search" class="search" placeholder="搜索文件名、路径、摘要、关键点…" />
+      </div>
+      <div class="status" id="status">分类：PDF: 6 · SOTA/厚书层: 4 · guiding layer: 8 · weekly runbooks: 12 · 数据矩阵: 6 · 研究总览: 3 · 脚本配置: 33<br />类型：CSV: 21 · HTML: 2 · JSON: 6 · MD: 22 · PDF: 6 · PY: 12 · SH: 1 · TXT: 1 · YAML: 1</div>
+    </section>
+    <section class="grid" id="gallery"></section>
+    <div class="footer">本页无外部依赖，可离线打开。摘要是索引，不替代原文。</div>
+  </main>
+  <script id="gallery-data" type="application/json">[{"name": "AI_CONTEXT.md", "path": "AI_CONTEXT.md", "href": "AI_CONTEXT.md", "ext": "MD", "category": "研究总览", "purpose": "研究说明文档，用于理解当前资料包的目标、边界和下一步。", "summary": "把 PCA-B0 项目重写成 AI 可直接理解和继续执行的项目上下文。", "keyPoints": ["章节：PCA-B0 AI Context、0. Agent Instruction、1. Project Definition、2. Core Concepts、3. Formal Model…", "`pca_b0_guiding_layer_v1/PCA_B0_guiding_charter_v1.pdf`", "`pca_b0_guiding_layer_v1/PCA_B0_guiding_charter_v1.md`", "`pca_b0_guiding_layer_v1/*.csv`"], "caveat": "摘要用于快速浏览，不替代逐篇阅读全文。", "nextStep": "作为阅读入口，继续补充人工批注或实验决策。", "stats": "703 lines · 18.7 KB", "filter": ["全部", "研究总览"]}, {"name": "direct_links_master.md", "path": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/common/direct_links_master.md", "href": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/common/direct_links_master.md", "ext": "MD", "category": "脚本配置", "purpose": "研究说明文档，用于理解当前资料包的目标、边界和下一步。", "summary": "围绕“Direct links”展开的文档，包含 1 个可识别章节。", "keyPoints": ["章节：Direct links。", "SDXL Base 1.0: https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0", "Diffusers SDXL docs: https://huggingface.co/docs/diffusers/en/using-diffusers/sdxl", "PartiPrompts: https://huggingface.co/datasets/nateraw/parti-prompts"], "caveat": "摘要用于快速浏览，不替代逐篇阅读全文。", "nextStep": "作为阅读入口，继续补充人工批注或实验决策。", "stats": "34 lines · 2.0 KB", "filter": ["全部", "脚本配置"]}, {"name": "pca_b0_schema.json", "path": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/common/pca_b0_schema.json", "href": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/common/pca_b0_schema.json", "ext": "JSON", "category": "脚本配置", "purpose": "配置或 schema 文件，用于约束数据结构、评分器或实验输入输出。", "summary": "JSON schema 或结构化配置，定义 PCA-B0 数据字段和约束。", "keyPoints": ["顶层键：task_id、prompt、reference_image、user_preference_statement、core_value_tags、forbidden_loss、allowed_deviation、task_type。"], "caveat": "配置/schema 改动会影响后续实验兼容性，修改前需要同步脚本和 CSV 字段。", "nextStep": "作为阅读入口，继续补充人工批注或实验决策。", "stats": "39 lines · 1.0 KB", "filter": ["全部", "脚本配置"]}, {"name": "resource_links.csv", "path": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/common/resource_links.csv", "href": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/common/resource_links.csv", "ext": "CSV", "category": "脚本配置", "purpose": "结构化矩阵/审计表，可用于筛选、排序或复核研究资料。", "summary": "包含 32 条记录、2 个字段的结构化表格。", "keyPoints": ["行列规模：32 行数据，2 个字段。", "核心字段：name、url。", "代表样例：name: SDXL Base 1.0；url: https://huggingface.co/stabilityai/stab…"], "caveat": "表格适合快速筛选，但关键结论仍要回到论文、数据官网或原始 runbook 复核。", "nextStep": "检查字段是否需要进入下一轮实验 schema 或报告模板。", "stats": "32 rows · 2 cols · 2.0 KB", "filter": ["全部", "数据矩阵", "脚本配置"]}, {"name": "README.md", "path": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/README.md", "href": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/README.md", "ext": "MD", "category": "guiding layer", "purpose": "PCA-B0 指导层资料，用于保持实验判断顺序和研究边界。", "summary": "资料包说明或目录入口，帮助理解当前文件夹的角色。", "keyPoints": ["章节：PCA-B0 detailed 5-week runbooks v3。"], "caveat": "guiding layer 是判断原则，不应被单个偏好分数覆盖。", "nextStep": "作为阅读入口，继续补充人工批注或实验决策。", "stats": "3 lines · 0.2 KB", "filter": ["guiding layer", "全部"]}, {"name": "direct_links.md", "path": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/week1/common/direct_links.md", "href": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/week1/common/direct_links.md", "ext": "MD", "category": "脚本配置", "purpose": "研究说明文档，用于理解当前资料包的目标、边界和下一步。", "summary": "Week 1 资源清点、环境搭建、PCA-B0 定义和 smoke test。", "keyPoints": ["章节：Direct links。", "SDXL Base 1.0: https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0", "Diffusers SDXL docs: https://huggingface.co/docs/diffusers/en/using-diffusers/sdxl", "PartiPrompts: https://huggingface.co/datasets/nateraw/parti-prompts"], "caveat": "摘要用于快速浏览，不替代逐篇阅读全文。", "nextStep": "作为阅读入口，继续补充人工批注或实验决策。", "stats": "34 lines · 2.0 KB", "filter": ["全部", "脚本配置"]}, {"name": "pca_b0_schema.json", "path": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/week1/common/pca_b0_schema.json", "href": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/week1/common/pca_b0_schema.json", "ext": "JSON", "category": "脚本配置", "purpose": "配置或 schema 文件，用于约束数据结构、评分器或实验输入输出。", "summary": "Week 1 资源清点、环境搭建、PCA-B0 定义和 smoke test。", "keyPoints": ["顶层键：task_id、prompt、reference_image、user_preference_statement、core_value_tags、forbidden_loss、allowed_deviation、task_type。"], "caveat": "配置/schema 改动会影响后续实验兼容性，修改前需要同步脚本和 CSV 字段。", "nextStep": "作为阅读入口，继续补充人工批注或实验决策。", "stats": "39 lines · 1.0 KB", "filter": ["全部", "脚本配置"]}, {"name": "resource_links.csv", "path": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/week1/common/resource_links.csv", "href": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/week1/common/resource_links.csv", "ext": "CSV", "category": "脚本配置", "purpose": "结构化矩阵/审计表，可用于筛选、排序或复核研究资料。", "summary": "Week 1 资源清点、环境搭建、PCA-B0 定义和 smoke test。", "keyPoints": ["行列规模：32 行数据，2 个字段。", "核心字段：name、url。", "代表样例：name: SDXL Base 1.0；url: https://huggingface.co/stabilityai/stab…"], "caveat": "表格适合快速筛选，但关键结论仍要回到论文、数据官网或原始 runbook 复核。", "nextStep": "检查字段是否需要进入下一轮实验 schema 或报告模板。", "stats": "32 rows · 2 cols · 1.9 KB", "filter": ["全部", "数据矩阵", "脚本配置"]}, {"name": "README_WEEK1.md", "path": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/week1/README_WEEK1.md", "href": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/week1/README_WEEK1.md", "ext": "MD", "category": "weekly runbooks", "purpose": "周计划资料，用于按阶段推进 PCA-B0 实验。", "summary": "Week 1 资源清点、环境搭建、PCA-B0 定义和 smoke test。 README 入口。", "keyPoints": ["章节：Week 1 detailed runbook。"], "caveat": "摘要用于快速浏览，不替代逐篇阅读全文。", "nextStep": "按周拆成任务清单，标记已完成、阻塞和待验证项。", "stats": "3 lines · 0.1 KB", "filter": ["weekly runbooks", "全部"]}, {"name": "requirements.txt", "path": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/week1/requirements.txt", "href": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/week1/requirements.txt", "ext": "TXT", "category": "脚本配置", "purpose": "研究说明文档，用于理解当前资料包的目标、边界和下一步。", "summary": "Week 1 资源清点、环境搭建、PCA-B0 定义和 smoke test。", "keyPoints": ["torch", "torchvision", "torchaudio"], "caveat": "摘要用于快速浏览，不替代逐篇阅读全文。", "nextStep": "作为阅读入口，继续补充人工批注或实验决策。", "stats": "20 lines · 0.2 KB", "filter": ["全部", "脚本配置"]}, {"name": "pca_b0_smoke_test.py", "path": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/week1/scripts/pca_b0_smoke_test.py", "href": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/week1/scripts/pca_b0_smoke_test.py", "ext": "PY", "category": "脚本配置", "purpose": "实验或辅助脚本，用于环境测试、评分、候选生成、报告或人类评估处理。", "summary": "Week 1 资源清点、环境搭建、PCA-B0 定义和 smoke test。", "keyPoints": ["依赖/模块：importlib。"], "caveat": "脚本未在本画廊中执行；运行前需确认依赖、路径、模型权重和输入数据。", "nextStep": "运行前先做 dry-run/依赖检查，并记录输入输出契约。", "stats": "7 lines · 0.3 KB", "filter": ["全部", "脚本配置"]}, {"name": "setup_environment.sh", "path": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/week1/setup_environment.sh", "href": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/week1/setup_environment.sh", "ext": "SH", "category": "脚本配置", "purpose": "实验或辅助脚本，用于环境测试、评分、候选生成、报告或人类评估处理。", "summary": "Week 1 资源清点、环境搭建、PCA-B0 定义和 smoke test。", "keyPoints": ["脚本较短，主要通过命令行或顺序逻辑完成任务。"], "caveat": "脚本未在本画廊中执行；运行前需确认依赖、路径、模型权重和输入数据。", "nextStep": "运行前先做 dry-run/依赖检查，并记录输入输出契约。", "stats": "7 lines · 0.2 KB", "filter": ["全部", "脚本配置"]}, {"name": "week1_experiment_runbook_v3.pdf", "path": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/week1/week1_experiment_runbook_v3.pdf", "href": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/week1/week1_experiment_runbook_v3.pdf", "ext": "PDF", "category": "PDF", "purpose": "原始 runbook 或 charter PDF，用于核对版式、表格、命令块和正式阅读依据。", "summary": "Week 1 资源清点、环境搭建、PCA-B0 定义和 smoke test。 PDF runbook。", "keyPoints": ["页数：9 页。", "PCA-B0 detailed runbook v3 - page 1", "第 1 周：资源清算、环境搭建与 PCA-B0 定义", "详细实验 runbook：每一步都有命令、输出和验收标准。"], "caveat": "PDF 是正式来源；若摘要与原文冲突，以 PDF 原文和 VLM/PDF 阅读报告为准。", "nextStep": "与对应 Markdown/README 交叉核对，确认关键步骤和验收标准。", "stats": "9 pages · 19.5 KB", "filter": ["PDF", "全部"]}, {"name": "direct_links.md", "path": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/week2/common/direct_links.md", "href": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/week2/common/direct_links.md", "ext": "MD", "category": "脚本配置", "purpose": "研究说明文档，用于理解当前资料包的目标、边界和下一步。", "summary": "Week 2 安装与统一调用评分器，输出可合并的 CSV 分数。", "keyPoints": ["章节：Direct links。", "SDXL Base 1.0: https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0", "Diffusers SDXL docs: https://huggingface.co/docs/diffusers/en/using-diffusers/sdxl", "PartiPrompts: https://huggingface.co/datasets/nateraw/parti-prompts"], "caveat": "摘要用于快速浏览，不替代逐篇阅读全文。", "nextStep": "作为阅读入口，继续补充人工批注或实验决策。", "stats": "34 lines · 2.0 KB", "filter": ["全部", "脚本配置"]}, {"name": "pca_b0_schema.json", "path": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/week2/common/pca_b0_schema.json", "href": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/week2/common/pca_b0_schema.json", "ext": "JSON", "category": "脚本配置", "purpose": "配置或 schema 文件，用于约束数据结构、评分器或实验输入输出。", "summary": "Week 2 安装与统一调用评分器，输出可合并的 CSV 分数。", "keyPoints": ["顶层键：task_id、prompt、reference_image、user_preference_statement、core_value_tags、forbidden_loss、allowed_deviation、task_type。"], "caveat": "配置/schema 改动会影响后续实验兼容性，修改前需要同步脚本和 CSV 字段。", "nextStep": "作为阅读入口，继续补充人工批注或实验决策。", "stats": "39 lines · 1.0 KB", "filter": ["全部", "脚本配置"]}, {"name": "resource_links.csv", "path": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/week2/common/resource_links.csv", "href": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/week2/common/resource_links.csv", "ext": "CSV", "category": "脚本配置", "purpose": "结构化矩阵/审计表，可用于筛选、排序或复核研究资料。", "summary": "Week 2 安装与统一调用评分器，输出可合并的 CSV 分数。", "keyPoints": ["行列规模：32 行数据，2 个字段。", "核心字段：name、url。", "代表样例：name: SDXL Base 1.0；url: https://huggingface.co/stabilityai/stab…"], "caveat": "表格适合快速筛选，但关键结论仍要回到论文、数据官网或原始 runbook 复核。", "nextStep": "检查字段是否需要进入下一轮实验 schema 或报告模板。", "stats": "32 rows · 2 cols · 1.9 KB", "filter": ["全部", "数据矩阵", "脚本配置"]}, {"name": "scoring.yaml", "path": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/week2/configs/scoring.yaml", "href": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/week2/configs/scoring.yaml", "ext": "YAML", "category": "脚本配置", "purpose": "配置或 schema 文件，用于约束数据结构、评分器或实验输入输出。", "summary": "Week 2 安装与统一调用评分器，输出可合并的 CSV 分数。", "keyPoints": ["配置文本包含 9 行。"], "caveat": "配置/schema 改动会影响后续实验兼容性，修改前需要同步脚本和 CSV 字段。", "nextStep": "作为阅读入口，继续补充人工批注或实验决策。", "stats": "9 lines · 0.2 KB", "filter": ["全部", "脚本配置"]}, {"name": "week2_sample_images.csv", "path": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/week2/data/pilot/week2_sample_images.csv", "href": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/week2/data/pilot/week2_sample_images.csv", "ext": "CSV", "category": "weekly runbooks", "purpose": "结构化矩阵/审计表，可用于筛选、排序或复核研究资料。", "summary": "Week 2 安装与统一调用评分器，输出可合并的 CSV 分数。", "keyPoints": ["行列规模：3 行数据，6 个字段。", "核心字段：candidate_id、prompt、image_path、reference_image、task_type、expected_text。", "代表样例：candidate_id: smoke_001；prompt: a friendly taxi driver mascot；image_path: outputs/candidates/smoke_001.png；reference_image: data/…"], "caveat": "表格适合快速筛选，但关键结论仍要回到论文、数据官网或原始 runbook 复核。", "nextStep": "检查字段是否需要进入下一轮实验 schema 或报告模板。", "stats": "3 rows · 6 cols · 0.3 KB", "filter": ["weekly runbooks", "全部", "数据矩阵"]}, {"name": "README_WEEK2.md", "path": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/week2/README_WEEK2.md", "href": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/week2/README_WEEK2.md", "ext": "MD", "category": "weekly runbooks", "purpose": "周计划资料，用于按阶段推进 PCA-B0 实验。", "summary": "Week 2 安装与统一调用评分器，输出可合并的 CSV 分数。 README 入口。", "keyPoints": ["章节：Week 2 detailed runbook。"], "caveat": "摘要用于快速浏览，不替代逐篇阅读全文。", "nextStep": "按周拆成任务清单，标记已完成、阻塞和待验证项。", "stats": "3 lines · 0.1 KB", "filter": ["weekly runbooks", "全部"]}, {"name": "merge_scores.py", "path": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/week2/scripts/scorers/merge_scores.py", "href": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/week2/scripts/scorers/merge_scores.py", "ext": "PY", "category": "脚本配置", "purpose": "实验或辅助脚本，用于环境测试、评分、候选生成、报告或人类评估处理。", "summary": "Week 2 安装与统一调用评分器，输出可合并的 CSV 分数。", "keyPoints": ["函数：main。", "依赖/模块：argparse、functools。"], "caveat": "脚本未在本画廊中执行；运行前需确认依赖、路径、模型权重和输入数据。", "nextStep": "运行前先做 dry-run/依赖检查，并记录输入输出契约。", "stats": "15 lines · 0.6 KB", "filter": ["全部", "脚本配置"]}, {"name": "score_emotion_zeroshot_clip.py", "path": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/week2/scripts/scorers/score_emotion_zeroshot_clip.py", "href": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/week2/scripts/scorers/score_emotion_zeroshot_clip.py", "ext": "PY", "category": "脚本配置", "purpose": "实验或辅助脚本，用于环境测试、评分、候选生成、报告或人类评估处理。", "summary": "Week 2 安装与统一调用评分器，输出可合并的 CSV 分数。", "keyPoints": ["函数：main。", "依赖/模块：PIL、argparse、open_clip、pathlib。"], "caveat": "脚本未在本画廊中执行；运行前需确认依赖、路径、模型权重和输入数据。", "nextStep": "运行前先做 dry-run/依赖检查，并记录输入输出契约。", "stats": "36 lines · 1.5 KB", "filter": ["全部", "脚本配置"]}, {"name": "score_preference_imagereward.py", "path": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/week2/scripts/scorers/score_preference_imagereward.py", "href": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/week2/scripts/scorers/score_preference_imagereward.py", "ext": "PY", "category": "脚本配置", "purpose": "实验或辅助脚本，用于环境测试、评分、候选生成、报告或人类评估处理。", "summary": "Week 2 安装与统一调用评分器，输出可合并的 CSV 分数。", "keyPoints": ["函数：main。", "依赖/模块：ImageReward、argparse、pathlib。"], "caveat": "脚本未在本画廊中执行；运行前需确认依赖、路径、模型权重和输入数据。", "nextStep": "运行前先做 dry-run/依赖检查，并记录输入输出契约。", "stats": "25 lines · 0.9 KB", "filter": ["全部", "脚本配置"]}, {"name": "score_subject_clip.py", "path": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/week2/scripts/scorers/score_subject_clip.py", "href": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/week2/scripts/scorers/score_subject_clip.py", "ext": "PY", "category": "脚本配置", "purpose": "实验或辅助脚本，用于环境测试、评分、候选生成、报告或人类评估处理。", "summary": "Week 2 安装与统一调用评分器，输出可合并的 CSV 分数。", "keyPoints": ["函数：encode、main。", "依赖/模块：PIL、argparse、open_clip、pathlib。"], "caveat": "脚本未在本画廊中执行；运行前需确认依赖、路径、模型权重和输入数据。", "nextStep": "运行前先做 dry-run/依赖检查，并记录输入输出契约。", "stats": "35 lines · 1.3 KB", "filter": ["全部", "脚本配置"]}, {"name": "score_text_ocr_easyocr.py", "path": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/week2/scripts/scorers/score_text_ocr_easyocr.py", "href": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/week2/scripts/scorers/score_text_ocr_easyocr.py", "ext": "PY", "category": "脚本配置", "purpose": "实验或辅助脚本，用于环境测试、评分、候选生成、报告或人类评估处理。", "summary": "Week 2 安装与统一调用评分器，输出可合并的 CSV 分数。", "keyPoints": ["函数：main。", "依赖/模块：argparse、easyocr、pathlib。"], "caveat": "脚本未在本画廊中执行；运行前需确认依赖、路径、模型权重和输入数据。", "nextStep": "运行前先做 dry-run/依赖检查，并记录输入输出契约。", "stats": "27 lines · 1.0 KB", "filter": ["全部", "脚本配置"]}, {"name": "week2_experiment_runbook_v3.pdf", "path": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/week2/week2_experiment_runbook_v3.pdf", "href": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/week2/week2_experiment_runbook_v3.pdf", "ext": "PDF", "category": "PDF", "purpose": "原始 runbook 或 charter PDF，用于核对版式、表格、命令块和正式阅读依据。", "summary": "Week 2 安装与统一调用评分器，输出可合并的 CSV 分数。 PDF runbook。", "keyPoints": ["页数：8 页。", "PCA-B0 detailed runbook v3 - page 1", "第 2 周：评分器安装、调用与统一输出", "详细实验 runbook：偏好、情绪、一致性、结构和 OCR 评分器。"], "caveat": "PDF 是正式来源；若摘要与原文冲突，以 PDF 原文和 VLM/PDF 阅读报告为准。", "nextStep": "与对应 Markdown/README 交叉核对，确认关键步骤和验收标准。", "stats": "8 pages · 13.6 KB", "filter": ["PDF", "全部"]}, {"name": "direct_links.md", "path": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/week3/common/direct_links.md", "href": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/week3/common/direct_links.md", "ext": "MD", "category": "脚本配置", "purpose": "研究说明文档，用于理解当前资料包的目标、边界和下一步。", "summary": "Week 3 候选生成、主体一致性 gate、感知激活 ranking pipeline。", "keyPoints": ["章节：Direct links。", "SDXL Base 1.0: https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0", "Diffusers SDXL docs: https://huggingface.co/docs/diffusers/en/using-diffusers/sdxl", "PartiPrompts: https://huggingface.co/datasets/nateraw/parti-prompts"], "caveat": "摘要用于快速浏览，不替代逐篇阅读全文。", "nextStep": "作为阅读入口，继续补充人工批注或实验决策。", "stats": "34 lines · 2.0 KB", "filter": ["全部", "脚本配置"]}, {"name": "pca_b0_schema.json", "path": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/week3/common/pca_b0_schema.json", "href": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/week3/common/pca_b0_schema.json", "ext": "JSON", "category": "脚本配置", "purpose": "配置或 schema 文件，用于约束数据结构、评分器或实验输入输出。", "summary": "Week 3 候选生成、主体一致性 gate、感知激活 ranking pipeline。", "keyPoints": ["顶层键：task_id、prompt、reference_image、user_preference_statement、core_value_tags、forbidden_loss、allowed_deviation、task_type。"], "caveat": "配置/schema 改动会影响后续实验兼容性，修改前需要同步脚本和 CSV 字段。", "nextStep": "作为阅读入口，继续补充人工批注或实验决策。", "stats": "39 lines · 1.0 KB", "filter": ["全部", "脚本配置"]}, {"name": "resource_links.csv", "path": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/week3/common/resource_links.csv", "href": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/week3/common/resource_links.csv", "ext": "CSV", "category": "脚本配置", "purpose": "结构化矩阵/审计表，可用于筛选、排序或复核研究资料。", "summary": "Week 3 候选生成、主体一致性 gate、感知激活 ranking pipeline。", "keyPoints": ["行列规模：32 行数据，2 个字段。", "核心字段：name、url。", "代表样例：name: SDXL Base 1.0；url: https://huggingface.co/stabilityai/stab…"], "caveat": "表格适合快速筛选，但关键结论仍要回到论文、数据官网或原始 runbook 复核。", "nextStep": "检查字段是否需要进入下一轮实验 schema 或报告模板。", "stats": "32 rows · 2 cols · 1.9 KB", "filter": ["全部", "数据矩阵", "脚本配置"]}, {"name": "tasks_v0_1.csv", "path": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/week3/pilot_data/tasks_v0_1.csv", "href": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/week3/pilot_data/tasks_v0_1.csv", "ext": "CSV", "category": "weekly runbooks", "purpose": "结构化矩阵/审计表，可用于筛选、排序或复核研究资料。", "summary": "Week 3 候选生成、主体一致性 gate、感知激活 ranking pipeline。", "keyPoints": ["行列规模：3 行数据，10 个字段。", "核心字段：task_id、prompt、reference_image、user_preference_statement、core_value_tags、forbidden_loss、allowed_deviation、task_type…", "代表样例：task_id: T001；prompt: a friendly taxi driver mascot, warm and…；reference_image: data/references/taxi_ref.png；user_preference_stat…"], "caveat": "表格适合快速筛选，但关键结论仍要回到论文、数据官网或原始 runbook 复核。", "nextStep": "检查字段是否需要进入下一轮实验 schema 或报告模板。", "stats": "3 rows · 10 cols · 0.6 KB", "filter": ["weekly runbooks", "全部", "数据矩阵"]}, {"name": "README_WEEK3.md", "path": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/week3/README_WEEK3.md", "href": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/week3/README_WEEK3.md", "ext": "MD", "category": "weekly runbooks", "purpose": "周计划资料，用于按阶段推进 PCA-B0 实验。", "summary": "Week 3 候选生成、主体一致性 gate、感知激活 ranking pipeline。 README 入口。", "keyPoints": ["章节：Week 3 detailed runbook。"], "caveat": "摘要用于快速浏览，不替代逐篇阅读全文。", "nextStep": "按周拆成任务清单，标记已完成、阻塞和待验证项。", "stats": "3 lines · 0.1 KB", "filter": ["weekly runbooks", "全部"]}, {"name": "generate_sdxl_candidates.py", "path": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/week3/scripts/generate_sdxl_candidates.py", "href": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/week3/scripts/generate_sdxl_candidates.py", "ext": "PY", "category": "脚本配置", "purpose": "实验或辅助脚本，用于环境测试、评分、候选生成、报告或人类评估处理。", "summary": "Week 3 候选生成、主体一致性 gate、感知激活 ranking pipeline。", "keyPoints": ["函数：main。", "依赖/模块：argparse、diffusers、pandas、pathlib。"], "caveat": "脚本未在本画廊中执行；运行前需确认依赖、路径、模型权重和输入数据。", "nextStep": "运行前先做 dry-run/依赖检查，并记录输入输出契约。", "stats": "31 lines · 1.6 KB", "filter": ["全部", "脚本配置"]}, {"name": "pca_b0_pipeline.py", "path": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/week3/scripts/pca_b0_pipeline.py", "href": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/week3/scripts/pca_b0_pipeline.py", "ext": "PY", "category": "脚本配置", "purpose": "实验或辅助脚本，用于环境测试、评分、候选生成、报告或人类评估处理。", "summary": "Week 3 候选生成、主体一致性 gate、感知激活 ranking pipeline。", "keyPoints": ["函数：norm、main。", "依赖/模块：argparse。"], "caveat": "脚本未在本画廊中执行；运行前需确认依赖、路径、模型权重和输入数据。", "nextStep": "运行前先做 dry-run/依赖检查，并记录输入输出契约。", "stats": "32 lines · 1.7 KB", "filter": ["全部", "脚本配置"]}, {"name": "week3_experiment_runbook_v3.pdf", "path": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/week3/week3_experiment_runbook_v3.pdf", "href": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/week3/week3_experiment_runbook_v3.pdf", "ext": "PDF", "category": "PDF", "purpose": "原始 runbook 或 charter PDF，用于核对版式、表格、命令块和正式阅读依据。", "summary": "Week 3 候选生成、主体一致性 gate、感知激活 ranking pipeline。 PDF runbook。", "keyPoints": ["页数：8 页。", "PCA-B0 detailed runbook v3 - page 1", "第 3 周：候选生成、门控与排序 Pipeline", "详细实验 runbook：生成候选图、构造 baseline、完成 PCA-B0 排序。"], "caveat": "PDF 是正式来源；若摘要与原文冲突，以 PDF 原文和 VLM/PDF 阅读报告为准。", "nextStep": "与对应 Markdown/README 交叉核对，确认关键步骤和验收标准。", "stats": "8 pages · 12.3 KB", "filter": ["PDF", "全部"]}, {"name": "direct_links.md", "path": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/week4/common/direct_links.md", "href": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/week4/common/direct_links.md", "ext": "MD", "category": "脚本配置", "purpose": "研究说明文档，用于理解当前资料包的目标、边界和下一步。", "summary": "Week 4 人类小样本盲评、contact sheet 和激活词标注。", "keyPoints": ["章节：Direct links。", "SDXL Base 1.0: https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0", "Diffusers SDXL docs: https://huggingface.co/docs/diffusers/en/using-diffusers/sdxl", "PartiPrompts: https://huggingface.co/datasets/nateraw/parti-prompts"], "caveat": "摘要用于快速浏览，不替代逐篇阅读全文。", "nextStep": "作为阅读入口，继续补充人工批注或实验决策。", "stats": "34 lines · 2.0 KB", "filter": ["全部", "脚本配置"]}, {"name": "pca_b0_schema.json", "path": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/week4/common/pca_b0_schema.json", "href": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/week4/common/pca_b0_schema.json", "ext": "JSON", "category": "脚本配置", "purpose": "配置或 schema 文件，用于约束数据结构、评分器或实验输入输出。", "summary": "Week 4 人类小样本盲评、contact sheet 和激活词标注。", "keyPoints": ["顶层键：task_id、prompt、reference_image、user_preference_statement、core_value_tags、forbidden_loss、allowed_deviation、task_type。"], "caveat": "配置/schema 改动会影响后续实验兼容性，修改前需要同步脚本和 CSV 字段。", "nextStep": "作为阅读入口，继续补充人工批注或实验决策。", "stats": "39 lines · 1.0 KB", "filter": ["全部", "脚本配置"]}, {"name": "resource_links.csv", "path": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/week4/common/resource_links.csv", "href": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/week4/common/resource_links.csv", "ext": "CSV", "category": "脚本配置", "purpose": "结构化矩阵/审计表，可用于筛选、排序或复核研究资料。", "summary": "Week 4 人类小样本盲评、contact sheet 和激活词标注。", "keyPoints": ["行列规模：32 行数据，2 个字段。", "核心字段：name、url。", "代表样例：name: SDXL Base 1.0；url: https://huggingface.co/stabilityai/stab…"], "caveat": "表格适合快速筛选，但关键结论仍要回到论文、数据官网或原始 runbook 复核。", "nextStep": "检查字段是否需要进入下一轮实验 schema 或报告模板。", "stats": "32 rows · 2 cols · 1.9 KB", "filter": ["全部", "数据矩阵", "脚本配置"]}, {"name": "human_eval_form_template.html", "path": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/week4/human_eval_form_template.html", "href": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/week4/human_eval_form_template.html", "ext": "HTML", "category": "weekly runbooks", "purpose": "可直接浏览的人类评估表单或 charter 页面。", "summary": "Week 4 人类小样本盲评、contact sheet 和激活词标注。", "keyPoints": ["<!doctype html><html><head><meta charset=\"utf-8\"><title>PCA-B0 Human Eval<\/title><\/head><body><h2>任务说明<\/h2><p…"], "caveat": "摘要用于快速浏览，不替代逐篇阅读全文。", "nextStep": "按周拆成任务清单，标记已完成、阻塞和待验证项。", "stats": "1 lines · 0.5 KB", "filter": ["weekly runbooks", "全部"]}, {"name": "annotation_items_template.csv", "path": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/week4/pilot_data/annotation_items_template.csv", "href": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/week4/pilot_data/annotation_items_template.csv", "ext": "CSV", "category": "weekly runbooks", "purpose": "结构化矩阵/审计表，可用于筛选、排序或复核研究资料。", "summary": "Week 4 人类小样本盲评、contact sheet 和激活词标注。", "keyPoints": ["行列规模：1 行数据，11 个字段。", "核心字段：annotation_item_id、task_id、option_A_path、option_B_path、option_C_path、option_D_path、method_A、method_B…", "代表样例：annotation_item_id: ANN001；task_id: T001；option_A_path: outputs/contact/T001_A.png；option_B_path: outputs/contact/T001_B.png"], "caveat": "表格适合快速筛选，但关键结论仍要回到论文、数据官网或原始 runbook 复核。", "nextStep": "检查字段是否需要进入下一轮实验 schema 或报告模板。", "stats": "1 rows · 11 cols · 0.3 KB", "filter": ["weekly runbooks", "全部", "数据矩阵"]}, {"name": "README_WEEK4.md", "path": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/week4/README_WEEK4.md", "href": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/week4/README_WEEK4.md", "ext": "MD", "category": "weekly runbooks", "purpose": "周计划资料，用于按阶段推进 PCA-B0 实验。", "summary": "Week 4 人类小样本盲评、contact sheet 和激活词标注。 README 入口。", "keyPoints": ["章节：Week 4 detailed runbook。"], "caveat": "摘要用于快速浏览，不替代逐篇阅读全文。", "nextStep": "按周拆成任务清单，标记已完成、阻塞和待验证项。", "stats": "3 lines · 0.1 KB", "filter": ["weekly runbooks", "全部"]}, {"name": "compute_human_metrics.py", "path": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/week4/scripts/compute_human_metrics.py", "href": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/week4/scripts/compute_human_metrics.py", "ext": "PY", "category": "脚本配置", "purpose": "实验或辅助脚本，用于环境测试、评分、候选生成、报告或人类评估处理。", "summary": "Week 4 人类小样本盲评、contact sheet 和激活词标注。", "keyPoints": ["函数：main。", "依赖/模块：argparse。"], "caveat": "脚本未在本画廊中执行；运行前需确认依赖、路径、模型权重和输入数据。", "nextStep": "运行前先做 dry-run/依赖检查，并记录输入输出契约。", "stats": "22 lines · 0.9 KB", "filter": ["全部", "脚本配置"]}, {"name": "make_contact_sheets.py", "path": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/week4/scripts/make_contact_sheets.py", "href": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/week4/scripts/make_contact_sheets.py", "ext": "PY", "category": "脚本配置", "purpose": "实验或辅助脚本，用于环境测试、评分、候选生成、报告或人类评估处理。", "summary": "Week 4 人类小样本盲评、contact sheet 和激活词标注。", "keyPoints": ["函数：make_sheet。", "依赖/模块：PIL、pandas、pathlib。"], "caveat": "脚本未在本画廊中执行；运行前需确认依赖、路径、模型权重和输入数据。", "nextStep": "运行前先做 dry-run/依赖检查，并记录输入输出契约。", "stats": "24 lines · 1.0 KB", "filter": ["全部", "脚本配置"]}, {"name": "week4_experiment_runbook_v3.pdf", "path": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/week4/week4_experiment_runbook_v3.pdf", "href": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/week4/week4_experiment_runbook_v3.pdf", "ext": "PDF", "category": "PDF", "purpose": "原始 runbook 或 charter PDF，用于核对版式、表格、命令块和正式阅读依据。", "summary": "Week 4 人类小样本盲评、contact sheet 和激活词标注。 PDF runbook。", "keyPoints": ["页数：8 页。", "PCA-B0 detailed runbook v3 - page 1", "第 4 周：人类小样本验证与激活词标注", "详细实验 runbook：接触表、标注表、用户选择和指标。"], "caveat": "PDF 是正式来源；若摘要与原文冲突，以 PDF 原文和 VLM/PDF 阅读报告为准。", "nextStep": "与对应 Markdown/README 交叉核对，确认关键步骤和验收标准。", "stats": "8 pages · 11.3 KB", "filter": ["PDF", "全部"]}, {"name": "direct_links.md", "path": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/week5/common/direct_links.md", "href": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/week5/common/direct_links.md", "ext": "MD", "category": "脚本配置", "purpose": "研究说明文档，用于理解当前资料包的目标、边界和下一步。", "summary": "Week 5 分析、消融、风险登记、报告和论文雏形。", "keyPoints": ["章节：Direct links。", "SDXL Base 1.0: https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0", "Diffusers SDXL docs: https://huggingface.co/docs/diffusers/en/using-diffusers/sdxl", "PartiPrompts: https://huggingface.co/datasets/nateraw/parti-prompts"], "caveat": "摘要用于快速浏览，不替代逐篇阅读全文。", "nextStep": "作为阅读入口，继续补充人工批注或实验决策。", "stats": "34 lines · 2.0 KB", "filter": ["全部", "脚本配置"]}, {"name": "pca_b0_schema.json", "path": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/week5/common/pca_b0_schema.json", "href": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/week5/common/pca_b0_schema.json", "ext": "JSON", "category": "脚本配置", "purpose": "配置或 schema 文件，用于约束数据结构、评分器或实验输入输出。", "summary": "Week 5 分析、消融、风险登记、报告和论文雏形。", "keyPoints": ["顶层键：task_id、prompt、reference_image、user_preference_statement、core_value_tags、forbidden_loss、allowed_deviation、task_type。"], "caveat": "配置/schema 改动会影响后续实验兼容性，修改前需要同步脚本和 CSV 字段。", "nextStep": "作为阅读入口，继续补充人工批注或实验决策。", "stats": "39 lines · 1.0 KB", "filter": ["全部", "脚本配置"]}, {"name": "resource_links.csv", "path": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/week5/common/resource_links.csv", "href": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/week5/common/resource_links.csv", "ext": "CSV", "category": "脚本配置", "purpose": "结构化矩阵/审计表，可用于筛选、排序或复核研究资料。", "summary": "Week 5 分析、消融、风险登记、报告和论文雏形。", "keyPoints": ["行列规模：32 行数据，2 个字段。", "核心字段：name、url。", "代表样例：name: SDXL Base 1.0；url: https://huggingface.co/stabilityai/stab…"], "caveat": "表格适合快速筛选，但关键结论仍要回到论文、数据官网或原始 runbook 复核。", "nextStep": "检查字段是否需要进入下一轮实验 schema 或报告模板。", "stats": "32 rows · 2 cols · 1.9 KB", "filter": ["全部", "数据矩阵", "脚本配置"]}, {"name": "paper_outline.md", "path": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/week5/paper_outline.md", "href": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/week5/paper_outline.md", "ext": "MD", "category": "weekly runbooks", "purpose": "周计划资料，用于按阶段推进 PCA-B0 实验。", "summary": "Week 5 分析、消融、风险登记、报告和论文雏形。", "keyPoints": ["章节：Perceptual-Consistency Activation Baseline for Reference-Guided AIGC Evaluation。"], "caveat": "摘要用于快速浏览，不替代逐篇阅读全文。", "nextStep": "按周拆成任务清单，标记已完成、阻塞和待验证项。", "stats": "10 lines · 0.2 KB", "filter": ["weekly runbooks", "全部"]}, {"name": "README_WEEK5.md", "path": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/week5/README_WEEK5.md", "href": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/week5/README_WEEK5.md", "ext": "MD", "category": "weekly runbooks", "purpose": "周计划资料，用于按阶段推进 PCA-B0 实验。", "summary": "Week 5 分析、消融、风险登记、报告和论文雏形。 README 入口。", "keyPoints": ["章节：Week 5 detailed runbook。"], "caveat": "摘要用于快速浏览，不替代逐篇阅读全文。", "nextStep": "按周拆成任务清单，标记已完成、阻塞和待验证项。", "stats": "3 lines · 0.1 KB", "filter": ["weekly runbooks", "全部"]}, {"name": "final_5week_report_template.md", "path": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/week5/reports/final_5week_report_template.md", "href": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/week5/reports/final_5week_report_template.md", "ext": "MD", "category": "weekly runbooks", "purpose": "周计划资料，用于按阶段推进 PCA-B0 实验。", "summary": "Week 5 分析、消融、风险登记、报告和论文雏形。", "keyPoints": ["章节：PCA-B0 Final 5-Week Pilot Report、1. Research Question、2. PCA-B0 Definition、3. Datasets and Resources、4. Scorers and Pipeline…"], "caveat": "摘要用于快速浏览，不替代逐篇阅读全文。", "nextStep": "按周拆成任务清单，标记已完成、阻塞和待验证项。", "stats": "12 lines · 0.2 KB", "filter": ["weekly runbooks", "全部"]}, {"name": "risk_register.csv", "path": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/week5/risk_register.csv", "href": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/week5/risk_register.csv", "ext": "CSV", "category": "weekly runbooks", "purpose": "结构化矩阵/审计表，可用于筛选、排序或复核研究资料。", "summary": "Week 5 分析、消融、风险登记、报告和论文雏形。", "keyPoints": ["行列规模：3 行数据，4 个字段。", "核心字段：risk_id、risk、impact、mitigation。", "代表样例：risk_id: R1；risk: Scorers disagree with human judgment；impact: High；mitigation: Keep human eval as pilot criterion"], "caveat": "表格适合快速筛选，但关键结论仍要回到论文、数据官网或原始 runbook 复核。", "nextStep": "检查字段是否需要进入下一轮实验 schema 或报告模板。", "stats": "3 rows · 4 cols · 0.3 KB", "filter": ["weekly runbooks", "全部", "数据矩阵"]}, {"name": "bootstrap_ci.py", "path": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/week5/scripts/bootstrap_ci.py", "href": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/week5/scripts/bootstrap_ci.py", "ext": "PY", "category": "脚本配置", "purpose": "实验或辅助脚本，用于环境测试、评分、候选生成、报告或人类评估处理。", "summary": "Week 5 分析、消融、风险登记、报告和论文雏形。", "keyPoints": ["函数：bootstrap_mean_ci。", "依赖/模块：numpy。"], "caveat": "脚本未在本画廊中执行；运行前需确认依赖、路径、模型权重和输入数据。", "nextStep": "运行前先做 dry-run/依赖检查，并记录输入输出契约。", "stats": "9 lines · 0.3 KB", "filter": ["全部", "脚本配置"]}, {"name": "make_tables.py", "path": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/week5/scripts/make_tables.py", "href": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/week5/scripts/make_tables.py", "ext": "PY", "category": "脚本配置", "purpose": "实验或辅助脚本，用于环境测试、评分、候选生成、报告或人类评估处理。", "summary": "Week 5 分析、消融、风险登记、报告和论文雏形。", "keyPoints": ["函数：main。", "依赖/模块：argparse、pathlib。"], "caveat": "脚本未在本画廊中执行；运行前需确认依赖、路径、模型权重和输入数据。", "nextStep": "运行前先做 dry-run/依赖检查，并记录输入输出契约。", "stats": "13 lines · 0.6 KB", "filter": ["全部", "脚本配置"]}, {"name": "week5_experiment_runbook_v3.pdf", "path": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/week5/week5_experiment_runbook_v3.pdf", "href": "pca_b0_5week_experiment_runbooks_v3/pca_b0_detailed_v3/week5/week5_experiment_runbook_v3.pdf", "ext": "PDF", "category": "PDF", "purpose": "原始 runbook 或 charter PDF，用于核对版式、表格、命令块和正式阅读依据。", "summary": "Week 5 分析、消融、风险登记、报告和论文雏形。 PDF runbook。", "keyPoints": ["页数：9 页。", "PCA-B0 detailed runbook v3 - page 1", "第 5 周：分析、消融、报告与论文雏形", "详细实验 runbook：从 pilot 到可交付科研报告。"], "caveat": "PDF 是正式来源；若摘要与原文冲突，以 PDF 原文和 VLM/PDF 阅读报告为准。", "nextStep": "与对应 Markdown/README 交叉核对，确认关键步骤和验收标准。", "stats": "9 pages · 12.6 KB", "filter": ["PDF", "全部"]}, {"name": "pca_b0_code_repo_map.csv", "path": "pca_b0_code_repo_map.csv", "href": "pca_b0_code_repo_map.csv", "ext": "CSV", "category": "数据矩阵", "purpose": "结构化矩阵/审计表，可用于筛选、排序或复核研究资料。", "summary": "40 个可复用代码仓库矩阵，说明依赖复杂度、输入输出和接入位置。", "keyPoints": ["行列规模：40 行数据，9 个字段。", "核心字段：序号、方法、repo、依赖复杂度、是否可复现、输入输出、来源链接、可接入 PCA-B0 的模块位置…", "代表样例：序号: 1；方法: Hugging Face Diffusers；repo: huggingface/diffusers；依赖复杂度: 中"], "caveat": "表格适合快速筛选，但关键结论仍要回到论文、数据官网或原始 runbook 复核。", "nextStep": "检查字段是否需要进入下一轮实验 schema 或报告模板。", "stats": "40 rows · 9 cols · 8.5 KB", "filter": ["SOTA/厚书层", "全部", "数据矩阵"]}, {"name": "pca_b0_dataset_map.csv", "path": "pca_b0_dataset_map.csv", "href": "pca_b0_dataset_map.csv", "ext": "CSV", "category": "数据矩阵", "purpose": "结构化矩阵/审计表，可用于筛选、排序或复核研究资料。", "summary": "36 个数据集和 benchmark 来源，区分训练、评估、proxy 与语境用途。", "keyPoints": ["行列规模：36 行数据，11 个字段。", "核心字段：序号、数据集、任务层、标签类型、规模、许可、下载源、来源链接…", "代表样例：序号: 1；数据集: DreamBench；任务层: 主体一致性；标签类型: subject images, prompts, evaluation pro…"], "caveat": "表格适合快速筛选，但关键结论仍要回到论文、数据官网或原始 runbook 复核。", "nextStep": "检查字段是否需要进入下一轮实验 schema 或报告模板。", "stats": "36 rows · 11 cols · 8.8 KB", "filter": ["SOTA/厚书层", "全部", "数据矩阵"]}, {"name": "pca_b0_dataset_quality_audit.csv", "path": "pca_b0_dataset_quality_audit.csv", "href": "pca_b0_dataset_quality_audit.csv", "ext": "CSV", "category": "数据矩阵", "purpose": "结构化矩阵/审计表，可用于筛选、排序或复核研究资料。", "summary": "逐条审计 36 个数据集的覆盖面、偏置、标签可靠性、许可风险和推荐用途。", "keyPoints": ["行列规模：36 行数据，12 个字段。", "核心字段：序号、数据集、coverage_breadth、school_bias、label_reliability、sample_diversity、license_clarity、train_fit…", "代表样例：序号: 1；数据集: DreamBench；coverage_breadth: 窄；school_bias: subject-driven personalization"], "caveat": "表格适合快速筛选，但关键结论仍要回到论文、数据官网或原始 runbook 复核。", "nextStep": "优先复核许可不清和 personal_memory_fit 较弱的数据项。", "stats": "36 rows · 12 cols · 5.9 KB", "filter": ["SOTA/厚书层", "全部", "数据矩阵"]}, {"name": "PCA_B0_DEEP_RESEARCH_MAP.md", "path": "PCA_B0_DEEP_RESEARCH_MAP.md", "href": "PCA_B0_DEEP_RESEARCH_MAP.md", "ext": "MD", "category": "研究总览", "purpose": "研究说明文档，用于理解当前资料包的目标、边界和下一步。", "summary": "建立 PCA-B0/CTAS 的深度调研地图，说明理论、数据、代码和第一批实验。", "keyPoints": ["章节：PCA-B0 Deep Research Map、0. 这份地图要解决什么、1. 课题主轴、1.1 三条线的关系、1.2 暂定理论名…", "不要训练 foundation model。", "不要把美学、情绪、记忆强行合成一个总分。", "不要让高美感分覆盖主体失败。"], "caveat": "摘要用于快速浏览，不替代逐篇阅读全文。", "nextStep": "作为阅读入口，继续补充人工批注或实验决策。", "stats": "298 lines · 11.5 KB", "filter": ["全部", "研究总览"]}, {"name": "pca_b0_foundational_idea_map.csv", "path": "pca_b0_foundational_idea_map.csv", "href": "pca_b0_foundational_idea_map.csv", "ext": "CSV", "category": "SOTA/厚书层", "purpose": "结构化矩阵/审计表，可用于筛选、排序或复核研究资料。", "summary": "46 条非 AIGC/非 diffusion 底层思想来源，为 CTAS 提供厚书层变量。", "keyPoints": ["行列规模：46 行数据，11 个字段。", "核心字段：序号、思想轴、来源、年份、类型、底层思想、可转化变量、对CTAS价值…", "代表样例：序号: 1；思想轴: 心理物理美学；来源: Gustav Fechner, Vorschule der Aesthetik；年份: 1876"], "caveat": "表格适合快速筛选，但关键结论仍要回到论文、数据官网或原始 runbook 复核。", "nextStep": "把底层变量映射到 CTAS 实验问卷和 ranker 解释字段。", "stats": "46 rows · 11 cols · 16.2 KB", "filter": ["SOTA/厚书层", "全部", "数据矩阵"]}, {"name": "glossary_v1.csv", "path": "pca_b0_guiding_layer_v1/glossary_v1.csv", "href": "pca_b0_guiding_layer_v1/glossary_v1.csv", "ext": "CSV", "category": "guiding layer", "purpose": "结构化矩阵/审计表，可用于筛选、排序或复核研究资料。", "summary": "PCA-B0 术语表，解释核心概念和实验语言。", "keyPoints": ["行列规模：6 行数据，3 个字段。", "核心字段：Term、Definition、Experimental Proxy。", "代表样例：Term: Core Consistency Gate；Definition: Minimum preservation of user-valued inv…；Experimental Proxy: subject_score, structure_sco…"], "caveat": "表格适合快速筛选，但关键结论仍要回到论文、数据官网或原始 runbook 复核。", "nextStep": "检查字段是否需要进入下一轮实验 schema 或报告模板。", "stats": "6 rows · 3 cols · 0.7 KB", "filter": ["guiding layer", "全部", "数据矩阵"]}, {"name": "PCA_B0_guiding_charter_v1.html", "path": "pca_b0_guiding_layer_v1/PCA_B0_guiding_charter_v1.html", "href": "pca_b0_guiding_layer_v1/PCA_B0_guiding_charter_v1.html", "ext": "HTML", "category": "guiding layer", "purpose": "可直接浏览的人类评估表单或 charter 页面。", "summary": "guiding charter 的 HTML 版本，可直接浏览 PCA-B0 判断原则。", "keyPoints": ["<!doctype html>", "<html lang=\"zh-CN\">", "<head>"], "caveat": "guiding layer 是判断原则，不应被单个偏好分数覆盖。", "nextStep": "作为阅读入口，继续补充人工批注或实验决策。", "stats": "490 lines · 17.8 KB", "filter": ["guiding layer", "全部"]}, {"name": "PCA_B0_guiding_charter_v1.md", "path": "pca_b0_guiding_layer_v1/PCA_B0_guiding_charter_v1.md", "href": "pca_b0_guiding_layer_v1/PCA_B0_guiding_charter_v1.md", "ext": "MD", "category": "guiding layer", "purpose": "PCA-B0 指导层资料，用于保持实验判断顺序和研究边界。", "summary": "PCA-B0 宪法层文档，定义核心一致性门槛与感知激活排序。", "keyPoints": ["章节：PCA-B0 总纲：感知激活-一致性基线的指导层、0. 为什么需要总纲、1. 总命题、2. 三层目标、2.1 第一层：显像层…", "\\(p\\)：prompt / 用户语言意图；", "\\(r\\)：reference / 参考图或参考主体；", "\\(u\\)：user / 用户偏好与历史；"], "caveat": "guiding layer 是判断原则，不应被单个偏好分数覆盖。", "nextStep": "作为阅读入口，继续补充人工批注或实验决策。", "stats": "437 lines · 13.1 KB", "filter": ["guiding layer", "全部"]}, {"name": "PCA_B0_guiding_charter_v1.pdf", "path": "pca_b0_guiding_layer_v1/PCA_B0_guiding_charter_v1.pdf", "href": "pca_b0_guiding_layer_v1/PCA_B0_guiding_charter_v1.pdf", "ext": "PDF", "category": "PDF", "purpose": "原始 runbook 或 charter PDF，用于核对版式、表格、命令块和正式阅读依据。", "summary": "共 11 页的 PDF 资料，用于原始内容核对和正式阅读。", "keyPoints": ["页数：11 页。", "PCA-B0 总纲：感知激活-一致性基线的", "指导层", "指导层 / 宪法层 / 判断层 · v1.0 · 2026-05-23"], "caveat": "PDF 是正式来源；若摘要与原文冲突，以 PDF 原文和 VLM/PDF 阅读报告为准。", "nextStep": "与对应 Markdown/README 交叉核对，确认关键步骤和验收标准。", "stats": "11 pages · 551.3 KB", "filter": ["PDF", "全部"]}, {"name": "README.md", "path": "pca_b0_guiding_layer_v1/README.md", "href": "pca_b0_guiding_layer_v1/README.md", "ext": "MD", "category": "guiding layer", "purpose": "PCA-B0 指导层资料，用于保持实验判断顺序和研究边界。", "summary": "资料包说明或目录入口，帮助理解当前文件夹的角色。", "keyPoints": ["章节：PCA-B0 Guiding Layer v1。"], "caveat": "guiding layer 是判断原则，不应被单个偏好分数覆盖。", "nextStep": "作为阅读入口，继续补充人工批注或实验决策。", "stats": "16 lines · 0.7 KB", "filter": ["guiding layer", "全部"]}, {"name": "risk_register_guiding_layer_v1.csv", "path": "pca_b0_guiding_layer_v1/risk_register_guiding_layer_v1.csv", "href": "pca_b0_guiding_layer_v1/risk_register_guiding_layer_v1.csv", "ext": "CSV", "category": "guiding layer", "purpose": "结构化矩阵/审计表，可用于筛选、排序或复核研究资料。", "summary": "guiding layer 级别风险登记表。", "keyPoints": ["行列规模：6 行数据，4 个字段。", "核心字段：Risk_ID、Risk、Why It Matters、Mitigation。", "代表样例：Risk_ID: R1；Risk: PCA-B0 becomes a bag of metrics；Why It Matters: Loses guiding thesis；Mitigation: Enforce gate-then-rank archite…"], "caveat": "表格适合快速筛选，但关键结论仍要回到论文、数据官网或原始 runbook 复核。", "nextStep": "检查字段是否需要进入下一轮实验 schema 或报告模板。", "stats": "6 rows · 4 cols · 0.6 KB", "filter": ["guiding layer", "全部", "数据矩阵"]}, {"name": "traceability_matrix_v1.csv", "path": "pca_b0_guiding_layer_v1/traceability_matrix_v1.csv", "href": "pca_b0_guiding_layer_v1/traceability_matrix_v1.csv", "ext": "CSV", "category": "guiding layer", "purpose": "结构化矩阵/审计表，可用于筛选、排序或复核研究资料。", "summary": "定义、runbook、产物和验收之间的追踪矩阵。", "keyPoints": ["行列规模：5 行数据，5 个字段。", "核心字段：Doctrine_ID、Guiding Statement、Mapped Experiment Asset、Acceptance Evidence、Weakening Evidence。", "代表样例：Doctrine_ID: D1；Guiding Statement: Good output = consistency gate + activa…；Mapped Experiment Asset: Week3 PCA-B0 pipeline；Accept…"], "caveat": "表格适合快速筛选，但关键结论仍要回到论文、数据官网或原始 runbook 复核。", "nextStep": "检查字段是否需要进入下一轮实验 schema 或报告模板。", "stats": "5 rows · 5 cols · 1.0 KB", "filter": ["guiding layer", "全部", "数据矩阵"]}, {"name": "weekly_alignment_checklist_v1.csv", "path": "pca_b0_guiding_layer_v1/weekly_alignment_checklist_v1.csv", "href": "pca_b0_guiding_layer_v1/weekly_alignment_checklist_v1.csv", "ext": "CSV", "category": "guiding layer", "purpose": "结构化矩阵/审计表，可用于筛选、排序或复核研究资料。", "summary": "每周实验是否与 guiding charter 对齐的检查表。", "keyPoints": ["行列规模：5 行数据，4 个字段。", "核心字段：Week、Question to Ask Before Running、Must Not Do、Required Output。", "代表样例：Week: 1；Question to Ask Before Running: Which doctrine layer does each resource…；Must Not Do: Do not download everything blindly；…"], "caveat": "表格适合快速筛选，但关键结论仍要回到论文、数据官网或原始 runbook 复核。", "nextStep": "检查字段是否需要进入下一轮实验 schema 或报告模板。", "stats": "5 rows · 4 cols · 0.6 KB", "filter": ["guiding layer", "全部", "数据矩阵"]}, {"name": "pca_b0_orthogonality_matrix.csv", "path": "pca_b0_orthogonality_matrix.csv", "href": "pca_b0_orthogonality_matrix.csv", "ext": "CSV", "category": "数据矩阵", "purpose": "结构化矩阵/审计表，可用于筛选、排序或复核研究资料。", "summary": "贡献向量正交矩阵，说明各资料保护变量、干预位置、评估目标和保留理由。", "keyPoints": ["行列规模：42 行数据，10 个字段。", "核心字段：序号、能力轴、资料、保护变量、干预位置、评估目标、独特贡献、与谁重复…", "代表样例：序号: 1；能力轴: 主体一致性；资料: DreamBench++；保护变量: S_id concept preservation"], "caveat": "表格适合快速筛选，但关键结论仍要回到论文、数据官网或原始 runbook 复核。", "nextStep": "从每个能力轴挑 1-2 个核心积木进入最小实验。", "stats": "42 rows · 10 cols · 8.7 KB", "filter": ["SOTA/厚书层", "全部", "数据矩阵"]}, {"name": "pca_b0_paper_matrix.csv", "path": "pca_b0_paper_matrix.csv", "href": "pca_b0_paper_matrix.csv", "ext": "CSV", "category": "数据矩阵", "purpose": "结构化矩阵/审计表，可用于筛选、排序或复核研究资料。", "summary": "105 条论文与理论来源宽池，覆盖主体、时间、因果、美感、情绪记忆和 benchmark。", "keyPoints": ["行列规模：105 行数据，10 个字段。", "核心字段：序号、方向、论文、年份、核心贡献、可用代码、数据集、来源链接…", "代表样例：序号: 1；方向: 主体一致性；论文: DreamBooth: Fine Tuning Text-to-Image D…；年份: 2022"], "caveat": "表格适合快速筛选，但关键结论仍要回到论文、数据官网或原始 runbook 复核。", "nextStep": "检查字段是否需要进入下一轮实验 schema 或报告模板。", "stats": "105 rows · 10 cols · 28.1 KB", "filter": ["SOTA/厚书层", "全部", "数据矩阵"]}, {"name": "pca_b0_sota_by_axis.csv", "path": "pca_b0_sota_by_axis.csv", "href": "pca_b0_sota_by_axis.csv", "ext": "CSV", "category": "数据矩阵", "purpose": "结构化矩阵/审计表，可用于筛选、排序或复核研究资料。", "summary": "8 个能力轴各 5 条 SOTA 候选，区分理论、方法、数据、评估和代码。", "keyPoints": ["行列规模：40 行数据，8 个字段。", "核心字段：序号、能力轴、SOTA类型、论文/方法/数据、证据来源、为什么是SOTA、保留理由、来源链接。", "代表样例：序号: 1；能力轴: 主体一致性；SOTA类型: 评估SOTA；论文/方法/数据: DreamBench++"], "caveat": "表格适合快速筛选，但关键结论仍要回到论文、数据官网或原始 runbook 复核。", "nextStep": "从每个能力轴挑 1-2 个核心积木进入最小实验。", "stats": "40 rows · 8 cols · 9.9 KB", "filter": ["SOTA/厚书层", "全部", "数据矩阵"]}, {"name": "pca_b0_synthesis_blueprint.md", "path": "pca_b0_synthesis_blueprint.md", "href": "pca_b0_synthesis_blueprint.md", "ext": "MD", "category": "SOTA/厚书层", "purpose": "理论、SOTA 或厚书层资料，用于决定课题根基和实验组合。", "summary": "把各轴 SOTA 组合成 PCA-B0/CTAS 第一批实验蓝图。", "keyPoints": ["章节：PCA-B0 / CTAS Synthesis Blueprint、1. 统筹原则、2. 第一批实验系统、2.1 输入、2.2 候选生成组…"], "caveat": "摘要用于快速浏览，不替代逐篇阅读全文。", "nextStep": "作为阅读入口，继续补充人工批注或实验决策。", "stats": "198 lines · 6.6 KB", "filter": ["SOTA/厚书层", "全部"]}, {"name": "PCA_B0_THEORY_FIRST_SOTA_MAP.md", "path": "PCA_B0_THEORY_FIRST_SOTA_MAP.md", "href": "PCA_B0_THEORY_FIRST_SOTA_MAP.md", "ext": "MD", "category": "SOTA/厚书层", "purpose": "理论、SOTA 或厚书层资料，用于决定课题根基和实验组合。", "summary": "按理论轴和 SOTA 轴组织资料，强调正交能力轴与厚书层原则。", "keyPoints": ["章节：PCA-B0 Theory-First SOTA Map、0. 核心修正、1. 理论分解、2. 正交性定义、3. SOTA 证据等级…"], "caveat": "摘要用于快速浏览，不替代逐篇阅读全文。", "nextStep": "从每个能力轴挑 1-2 个核心积木进入最小实验。", "stats": "287 lines · 12.2 KB", "filter": ["SOTA/厚书层", "全部"]}, {"name": "PCA_B0_THICK_READING_REVIEW.md", "path": "PCA_B0_THICK_READING_REVIEW.md", "href": "PCA_B0_THICK_READING_REVIEW.md", "ext": "MD", "category": "SOTA/厚书层", "purpose": "理论、SOTA 或厚书层资料，用于决定课题根基和实验组合。", "summary": "正式审查资料是否面广、质高、书读得厚，并指出补齐方向。", "keyPoints": ["章节：PCA-B0 Thick Reading Review、0. Review 结论、1. 面是否广、1.1 原资料的优势、1.2 原资料的偏置…"], "caveat": "摘要用于快速浏览，不替代逐篇阅读全文。", "nextStep": "作为阅读入口，继续补充人工批注或实验决策。", "stats": "144 lines · 7.3 KB", "filter": ["SOTA/厚书层", "全部"]}, {"name": "pca_b0_vlm_pdf_reading_report.md", "path": "pca_b0_vlm_pdf_reading_report.md", "href": "pca_b0_vlm_pdf_reading_report.md", "ext": "MD", "category": "研究总览", "purpose": "研究说明文档，用于理解当前资料包的目标、边界和下一步。", "summary": "记录 6 个 PDF 的文本抽取和 VLM 视觉核对结果。", "keyPoints": ["章节：PCA-B0 PDF/VLM 阅读报告、1. 读取范围与验证、2. 读取方法、3. 总纲摘要、4. 五周 Runbook 摘要…", "文本索引：使用 `pypdf` 抽取每页文本，生成页级目录、关键词标记和内容摘要。", "视觉核对：将 53 页临时渲染为 PNG，并生成 6 张 PDF 总览图；用 VLM 检查标题层级、表格、命令块、页码和中文排版。", "临时文件：页面图和总览图只用于核对，完成后已删除。"], "caveat": "摘要用于快速浏览，不替代逐篇阅读全文。", "nextStep": "作为阅读入口，继续补充人工批注或实验决策。", "stats": "281 lines · 11.8 KB", "filter": ["全部", "研究总览"]}]</script>
+  <script>
+    const entries = JSON.parse(document.getElementById('gallery-data').textContent);
+    const gallery = document.getElementById('gallery');
+    const status = document.getElementById('status');
+    const search = document.getElementById('search');
+    let active = '全部';
+
+    function escapeHtml(value) {
+      return String(value).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+    }
+    function matches(entry) {
+      const inFilter = active === '全部' || entry.filter.includes(active);
+      const q = search.value.trim().toLowerCase();
+      if (!q) return inFilter;
+      const haystack = [
+        entry.name, entry.path, entry.ext, entry.category, entry.purpose,
+        entry.summary, entry.caveat, entry.nextStep, ...(entry.keyPoints || [])
+      ].join(' ').toLowerCase();
+      return inFilter && haystack.includes(q);
+    }
+    function card(entry, index) {
+      const lis = (entry.keyPoints || []).map(x => `<li>${escapeHtml(x)}</li>`).join('');
+      return `<article class="card" style="animation-delay:${Math.min(index * 18, 500)}ms">
+        <div class="badge-row">
+          <span class="badge">${escapeHtml(entry.category)}</span>
+          <span class="badge">${escapeHtml(entry.ext)}</span>
+          <span class="badge">${escapeHtml(entry.stats)}</span>
+        </div>
+        <h2>${escapeHtml(entry.name)}</h2>
+        <a class="path" href="${entry.href}" target="_blank">${escapeHtml(entry.path)}</a>
+        <p class="summary">${escapeHtml(entry.summary)}</p>
+        <div class="section-title">用途</div>
+        <p class="summary">${escapeHtml(entry.purpose)}</p>
+        <div class="section-title">关键内容</div>
+        <ul>${lis || '<li>暂无可抽取的关键点，请直接查看原文件。</li>'}</ul>
+        <div class="note caveat"><strong>注意：</strong>${escapeHtml(entry.caveat)}</div>
+        <div class="note next"><strong>下一步：</strong>${escapeHtml(entry.nextStep)}</div>
+      </article>`;
+    }
+    function render() {
+      const filtered = entries.filter(matches);
+      gallery.innerHTML = filtered.map(card).join('');
+      status.innerHTML = `当前显示 <strong>${filtered.length}</strong> / ${entries.length} 个文件 · 筛选：${escapeHtml(active)}`;
+    }
+    document.querySelectorAll('button.filter').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('button.filter').forEach(x => x.classList.remove('active'));
+        btn.classList.add('active');
+        active = btn.dataset.filter;
+        render();
+      });
+    });
+    search.addEventListener('input', render);
+    render();
+  </script>
+</body>
+</html>

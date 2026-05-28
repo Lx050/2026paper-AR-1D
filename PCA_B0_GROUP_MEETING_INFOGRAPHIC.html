@@ -1,0 +1,438 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PCA-B0 组会信息图 | 可点击链接版</title>
+  <style>
+    :root {
+      --ink: #182235;
+      --muted: #5d6b7b;
+      --paper: rgba(255, 250, 234, .88);
+      --paper-strong: rgba(255, 255, 248, .94);
+      --blue: #6fb0c7;
+      --gold: #edbd61;
+      --rose: #e8948b;
+      --green: #8daf78;
+      --violet: #9d93cf;
+      --line: rgba(24, 34, 53, .18);
+      --shadow: 0 24px 70px rgba(35, 45, 67, .16);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      font-family: "Microsoft YaHei", "PingFang SC", "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at 10% 10%, rgba(237, 189, 97, .72), transparent 30%),
+        radial-gradient(circle at 84% 12%, rgba(111, 176, 199, .66), transparent 32%),
+        radial-gradient(circle at 18% 86%, rgba(232, 148, 139, .62), transparent 34%),
+        linear-gradient(135deg, #fff1c8, #e9f4ef 42%, #f7d6cf 76%, #fcf1d4);
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        repeating-linear-gradient(116deg, rgba(255,255,255,.28) 0 2px, transparent 2px 10px),
+        repeating-linear-gradient(24deg, rgba(24,34,53,.06) 0 1px, transparent 1px 12px);
+      mix-blend-mode: soft-light;
+      opacity: .58;
+    }
+    a {
+      color: #155f79;
+      font-weight: 800;
+      text-decoration: none;
+    }
+    a:hover { text-decoration: underline; }
+    .shell {
+      width: min(1240px, calc(100vw - 36px));
+      margin: 0 auto;
+      padding: 34px 0 58px;
+      position: relative;
+      z-index: 1;
+    }
+    .hero {
+      padding: 34px;
+      border-radius: 34px;
+      background: var(--paper);
+      border: 1px solid rgba(255,255,255,.76);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+    }
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.62);
+      color: var(--muted);
+      font-size: 13px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    h1 {
+      margin: 18px 0 12px;
+      font-size: clamp(34px, 5.4vw, 68px);
+      line-height: 1.03;
+      letter-spacing: -.04em;
+      font-family: "STKaiti", "KaiTi", Georgia, serif;
+    }
+    h2 {
+      margin: 0 0 14px;
+      font-size: 28px;
+      font-family: "STKaiti", "KaiTi", Georgia, serif;
+    }
+    h3 {
+      margin: 0 0 8px;
+      font-size: 17px;
+    }
+    p {
+      margin: 0;
+      line-height: 1.72;
+      color: #405166;
+    }
+    .subtitle {
+      max-width: 920px;
+      font-size: 18px;
+    }
+    .thesis {
+      margin-top: 22px;
+      padding: 20px;
+      border-radius: 24px;
+      background: linear-gradient(135deg, rgba(111,176,199,.28), rgba(237,189,97,.30));
+      font-size: 22px;
+      line-height: 1.55;
+      font-weight: 900;
+    }
+    .quicklinks {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 11px 15px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.76);
+      border: 1px solid rgba(21, 95, 121, .20);
+      box-shadow: 0 10px 24px rgba(35,45,67,.08);
+      color: #155f79;
+      font-size: 14px;
+      text-decoration: none;
+    }
+    .btn:hover {
+      transform: translateY(-1px);
+      text-decoration: none;
+      border-color: rgba(21, 95, 121, .45);
+    }
+    .btn.primary {
+      color: #fff;
+      background: linear-gradient(135deg, #195b72, #2f8baa);
+      border-color: transparent;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 1.08fr 1.22fr .95fr;
+      gap: 18px;
+      margin-top: 20px;
+    }
+    .panel {
+      padding: 22px;
+      border-radius: 28px;
+      background: var(--paper);
+      border: 1px solid rgba(255,255,255,.74);
+      box-shadow: var(--shadow);
+      min-height: 240px;
+    }
+    .route {
+      display: grid;
+      gap: 11px;
+    }
+    .chip {
+      padding: 14px;
+      border-radius: 18px;
+      background: rgba(255,255,255,.64);
+      border-left: 6px solid var(--blue);
+    }
+    .chip:nth-child(2) { border-left-color: var(--gold); }
+    .chip:nth-child(3) { border-left-color: var(--rose); }
+    .chip:nth-child(4) { border-left-color: var(--green); }
+    .chip:nth-child(5) { border-left-color: var(--violet); }
+    .small {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.58;
+    }
+    .paper-card {
+      padding: 22px;
+      border-radius: 26px;
+      background:
+        radial-gradient(circle at 85% 18%, rgba(237,189,97,.34), transparent 38%),
+        linear-gradient(135deg, rgba(255,255,255,.70), rgba(111,176,199,.22));
+      border: 1px solid rgba(255,255,255,.82);
+    }
+    .paper-card strong {
+      display: block;
+      font-size: 25px;
+      line-height: 1.25;
+      margin-bottom: 8px;
+    }
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 14px;
+    }
+    .metric {
+      padding: 13px;
+      border-radius: 18px;
+      background: rgba(255,255,255,.64);
+      min-height: 92px;
+    }
+    .metric b {
+      display: block;
+      font-size: 22px;
+      margin-bottom: 4px;
+    }
+    .flow {
+      display: grid;
+      gap: 14px;
+      margin-top: 16px;
+    }
+    .node {
+      position: relative;
+      padding: 16px;
+      border-radius: 20px;
+      background: rgba(255,255,255,.64);
+      border: 1px solid rgba(255,255,255,.78);
+    }
+    .node::after {
+      content: "↓";
+      position: absolute;
+      left: 50%;
+      bottom: -19px;
+      transform: translateX(-50%);
+      color: #7b8796;
+      font-size: 18px;
+      font-weight: 900;
+    }
+    .node:last-child::after { display: none; }
+    .axis {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .axis div {
+      padding: 14px;
+      border-radius: 18px;
+      background: rgba(255,255,255,.60);
+      min-height: 88px;
+    }
+    .baseline {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 20px;
+    }
+    .paper-link {
+      display: block;
+      min-height: 142px;
+      padding: 16px;
+      border-radius: 22px;
+      background: var(--paper-strong);
+      border: 1px solid rgba(255,255,255,.78);
+      box-shadow: 0 16px 42px rgba(35,45,67,.10);
+      text-decoration: none;
+    }
+    .paper-link:hover {
+      transform: translateY(-2px);
+      border-color: rgba(21, 95, 121, .45);
+      text-decoration: none;
+    }
+    .paper-link span {
+      display: inline-flex;
+      margin-top: 10px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: rgba(111,176,199,.16);
+      color: #155f79;
+      font-size: 12px;
+      font-weight: 900;
+    }
+    .timeline {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+      margin-top: 20px;
+    }
+    .minute {
+      padding: 16px;
+      border-radius: 22px;
+      background: rgba(255,255,255,.64);
+      border-top: 6px solid var(--gold);
+      min-height: 156px;
+    }
+    .minute:nth-child(2) { border-top-color: var(--blue); }
+    .minute:nth-child(3) { border-top-color: var(--rose); }
+    .minute:nth-child(4) { border-top-color: var(--green); }
+    .minute:nth-child(5) { border-top-color: var(--violet); }
+    .source-list {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 20px;
+    }
+    .source-card {
+      padding: 16px;
+      border-radius: 22px;
+      background: rgba(255,255,255,.66);
+      border: 1px solid rgba(255,255,255,.75);
+    }
+    .footer {
+      margin-top: 18px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 14px;
+    }
+    @media (max-width: 980px) {
+      .shell { width: min(100vw - 24px, 760px); }
+      .grid, .baseline, .timeline, .source-list { grid-template-columns: 1fr; }
+      .metric-grid, .axis { grid-template-columns: 1fr; }
+    }
+    @media print {
+      body { background: #fff8e7; }
+      .btn::after, .paper-link span::after { content: " " attr(href); font-weight: 400; color: #607085; }
+      .shell { width: 100%; padding: 0; }
+      .hero, .panel, .paper-link { box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <section class="hero">
+      <span class="tag">PCA-B0 group meeting · clickable edition</span>
+      <h1>从保主体到打动人</h1>
+      <p class="subtitle">组会主线：我不是要证明某个单一指标，而是把“主体一致性”作为前置门槛，在门槛之后研究如何激活审美、情绪和记忆。押注 baseline 是 DreamBench++，因为它最适合作为 subject gate 的人类对齐评估锚点。</p>
+      <div class="thesis">Good Output = Subject Consistency Gate + Causal-Temporal Perceptual Activation + Human Memory Calibration</div>
+      <div class="quicklinks" aria-label="核心可点击链接">
+        <a class="btn primary" href="papers/DreamBenchPlus_2406.16855_full.pdf" target="_blank" rel="noopener">打开本地 DreamBench++ PDF</a>
+        <a class="btn" href="https://arxiv.org/abs/2406.16855" target="_blank" rel="noopener">arXiv</a>
+        <a class="btn" href="https://dreambenchplus.github.io/" target="_blank" rel="noopener">Project Page</a>
+        <a class="btn" href="https://github.com/yuangpeng/dreambench_plus" target="_blank" rel="noopener">GitHub Code</a>
+        <a class="btn" href="PCA_B0_GROUP_MEETING_VERBATIM_SCRIPT.md" target="_blank" rel="noopener">逐字稿</a>
+      </div>
+    </section>
+
+    <section class="grid">
+      <article class="panel">
+        <h2>1. 我想干嘛</h2>
+        <div class="route">
+          <div class="chip"><h3>不是终点：像不像参考图</h3><p class="small">主体一致性只是 gate。通过 gate 后，才进入美感、情绪、记忆的研究区。</p></div>
+          <div class="chip"><h3>真正问题：怎么更动人</h3><p class="small">在不破坏主体的条件下，改变构图、光影、风格、材质、文化符号和情绪张力。</p></div>
+          <div class="chip"><h3>理论押注：CTAS</h3><p class="small">Causal-Temporal Activation Space：潜变量不独立，扩散时间阶段也不等价。</p></div>
+          <div class="chip"><h3>实验入口：先轻量</h3><p class="small">先用现成 personalized generation 方法出候选，再做 gate + activation ranking。</p></div>
+        </div>
+      </article>
+
+      <article class="panel">
+        <h2>2. 押注主论文</h2>
+        <div class="paper-card">
+          <strong>DreamBench++: A Human-Aligned Benchmark for Personalized Image Generation</strong>
+          <p>ICLR 2025 conference paper。它把 personalized image generation 的评估拆成两个核心维度：Concept Preservation 和 Prompt Following，并用 GPT-4o 做更贴近人类判断的自动评估。</p>
+          <div class="quicklinks">
+            <a class="btn primary" href="papers/DreamBenchPlus_2406.16855_full.pdf" target="_blank" rel="noopener">本地 PDF</a>
+            <a class="btn" href="https://openreview.net/forum?id=4GSOESJrk6" target="_blank" rel="noopener">OpenReview</a>
+            <a class="btn" href="https://dreambenchplus.github.io/" target="_blank" rel="noopener">Leaderboard</a>
+          </div>
+        </div>
+        <div class="metric-grid">
+          <div class="metric"><b>150</b><p class="small">高质量 reference images</p></div>
+          <div class="metric"><b>1,350</b><p class="small">由 GPT-4o 生成并经人工校准的 prompts</p></div>
+          <div class="metric"><b>7</b><p class="small">现代 personalized generation 模型评测</p></div>
+        </div>
+      </article>
+
+      <article class="panel">
+        <h2>3. 和我课题的关系</h2>
+        <div class="flow">
+          <div class="node"><h3>Reference Image</h3><p class="small">不是复制模板，而是用户价值、身份和记忆的锚点。</p></div>
+          <div class="node"><h3>DreamBench++ Gate</h3><p class="small">先判断主体有没有保住，以及新 prompt 是否被遵循。</p></div>
+          <div class="node"><h3>PCA-B0 / CTAS</h3><p class="small">通过 gate 后，再研究美感、情绪和记忆如何被安全激活。</p></div>
+        </div>
+      </article>
+    </section>
+
+    <section class="panel" style="margin-top:20px;">
+      <h2>4. Baseline 选录：主体一致性路线图</h2>
+      <div class="baseline">
+        <a class="paper-link" href="https://arxiv.org/abs/2208.12242" target="_blank" rel="noopener"><h3>DreamBooth</h3><p class="small">少量主体图微调，subject-driven generation 的经典起点。</p><span>点击论文</span></a>
+        <a class="paper-link" href="https://arxiv.org/abs/2208.01618" target="_blank" rel="noopener"><h3>Textual Inversion</h3><p class="small">用 learned token 表示新概念，说明低成本 personalization 路线。</p><span>点击论文</span></a>
+        <a class="paper-link" href="https://arxiv.org/abs/2212.04488" target="_blank" rel="noopener"><h3>Custom Diffusion</h3><p class="small">多概念定制，适合暴露多主体/多潜空间互扰问题。</p><span>点击论文</span></a>
+        <a class="paper-link" href="https://arxiv.org/abs/2305.14720" target="_blank" rel="noopener"><h3>BLIP-Diffusion</h3><p class="small">预训练 subject representation，连接图文理解和可控生成。</p><span>点击论文</span></a>
+        <a class="paper-link" href="https://arxiv.org/abs/2308.06721" target="_blank" rel="noopener"><h3>IP-Adapter</h3><p class="small">decoupled cross-attention 接图像提示，适合 reference-guided workflow。</p><span>点击论文</span></a>
+        <a class="paper-link" href="https://arxiv.org/abs/2312.04461" target="_blank" rel="noopener"><h3>PhotoMaker</h3><p class="small">人像 ID 保持强，适合身份子域 baseline。</p><span>点击论文</span></a>
+        <a class="paper-link" href="https://arxiv.org/abs/2401.07519" target="_blank" rel="noopener"><h3>InstantID</h3><p class="small">快速 zero-shot identity preservation，可作为人脸身份路线对照。</p><span>点击论文</span></a>
+        <a class="paper-link" href="https://dreambenchplus.github.io/" target="_blank" rel="noopener"><h3>DreamBench++</h3><p class="small">人类对齐 subject gate：Concept Preservation + Prompt Following。</p><span>点击项目</span></a>
+      </div>
+    </section>
+
+    <section class="grid">
+      <article class="panel">
+        <h2>5. CTAS 变量</h2>
+        <div class="axis">
+          <div><h3>S_id</h3><p class="small">主体、身份、对象不变量空间。</p></div>
+          <div><h3>S_aes</h3><p class="small">审美、风格、质感、构图空间。</p></div>
+          <div><h3>S_affect</h3><p class="small">温暖、孤独、庄严、怀旧、震撼等情绪空间。</p></div>
+          <div><h3>S_mem</h3><p class="small">个人经历、时代感、物件线索、文化符号空间。</p></div>
+        </div>
+      </article>
+      <article class="panel">
+        <h2>6. 时间调制假设</h2>
+        <div class="route">
+          <div class="chip"><h3>T_early</h3><p class="small">锁主体结构和大轮廓，尽量减少风格冲击。</p></div>
+          <div class="chip"><h3>T_mid</h3><p class="small">调语义、情绪、构图，是 CTAS 的主要干预窗口。</p></div>
+          <div class="chip"><h3>T_late</h3><p class="small">调光影、色彩、材质和细节，适合审美增益。</p></div>
+        </div>
+      </article>
+      <article class="panel">
+        <h2>7. 2026 补充</h2>
+        <div class="route">
+          <div class="chip"><h3><a href="https://arxiv.org/abs/2603.08090" target="_blank" rel="noopener">DSH-Bench</a></h3><p class="small">2026 subject-driven T2I benchmark，作为最新评估补充。</p></div>
+          <div class="chip"><h3><a href="https://github.com/fenghora/personalize-anything" target="_blank" rel="noopener">Personalize Anything</a></h3><p class="small">AAAI 2026 open-source personalized generation，作为新方法观察口。</p></div>
+        </div>
+      </article>
+    </section>
+
+    <section class="panel" style="margin-top:20px;">
+      <h2>8. 5 分钟讲法</h2>
+      <div class="timeline">
+        <div class="minute"><h3>第 1 分钟</h3><p class="small">问题不是“更像”，而是“保住主体后更美、更动人、更能唤起记忆”。</p></div>
+        <div class="minute"><h3>第 2 分钟</h3><p class="small">baseline 不是找万能论文，而是列出主体一致性的几条强路线。</p></div>
+        <div class="minute"><h3>第 3 分钟</h3><p class="small">DreamBench++ 做 subject gate，拆分 CP 和 PF。</p></div>
+        <div class="minute"><h3>第 4 分钟</h3><p class="small">我的差异在 gate 后：CTAS 的美感、情绪、记忆激活。</p></div>
+        <div class="minute"><h3>第 5 分钟</h3><p class="small">下一步做最小实验：候选生成、主体过滤、activation ranking、人类小样本校准。</p></div>
+      </div>
+    </section>
+
+    <section class="panel" style="margin-top:20px;">
+      <h2>9. 可点击资料入口</h2>
+      <div class="source-list">
+        <div class="source-card"><h3>主论文</h3><p class="small"><a href="papers/DreamBenchPlus_2406.16855_full.pdf" target="_blank" rel="noopener">本地 PDF</a> · <a href="https://arxiv.org/abs/2406.16855" target="_blank" rel="noopener">arXiv</a> · <a href="https://openreview.net/forum?id=4GSOESJrk6" target="_blank" rel="noopener">OpenReview</a></p></div>
+        <div class="source-card"><h3>代码与项目</h3><p class="small"><a href="https://github.com/yuangpeng/dreambench_plus" target="_blank" rel="noopener">DreamBench++ GitHub</a> · <a href="https://dreambenchplus.github.io/" target="_blank" rel="noopener">Project Page</a></p></div>
+        <div class="source-card"><h3>组会文件</h3><p class="small"><a href="PCA_B0_GROUP_MEETING_VERBATIM_SCRIPT.md" target="_blank" rel="noopener">逐字稿</a> · <a href="outputs/manual-groupmeeting-dreambench/presentations/dreambench-plus/output/PCA_B0_DreamBenchPlus_Group_Meeting.pptx" target="_blank" rel="noopener">PPTX</a></p></div>
+      </div>
+      <p class="footer">本页为离线可读 HTML；所有蓝色按钮和卡片均可点击，适合组会前快速打开资料。</p>
+    </section>
+  </main>
+</body>
+</html>
