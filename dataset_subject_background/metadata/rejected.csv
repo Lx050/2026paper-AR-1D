@@ -1,0 +1,1 @@
+sample_id,source_image,target_image,instruction,edit_type,subject_category,subject_description,original_background,target_background,keep_constraints,negative_constraints,source_generator,edit_generator,subject_bbox,subject_mask_path,qc_status,reject_reason,split

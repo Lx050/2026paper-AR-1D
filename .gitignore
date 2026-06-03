@@ -1,0 +1,20 @@
+# Local release packages; full datasets are uploaded as GitHub Release assets.
+release_artifacts/
+
+# Imported source materials require separate review before publishing.
+source_materials/
+
+# Dataset cache and Python runtime output.
+dataset_subject_background/.cache/
+dataset_subject_background/scripts/__pycache__/
+
+# Large dataset binaries are distributed in the release archive, not Git history.
+dataset_subject_background/raw_sources/
+dataset_subject_background/selected_sources/
+dataset_subject_background/edited_targets/
+dataset_subject_background/final/
+dataset_subject_background/masks/
+dataset_subject_background/supplemental/
+dataset_subject_background/real_validation/
+dataset_subject_background/qc/contact_sheets/
+dataset_subject_background/qc/pending/
